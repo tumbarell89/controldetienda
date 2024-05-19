@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function Dashboard({ auth }) {
+export default function Dashboard({ auth,children }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -16,6 +16,7 @@ export default function Dashboard({ auth }) {
                     </div>
                 </div>
             </div>
+            {children}
         </AuthenticatedLayout>
     );
 }
