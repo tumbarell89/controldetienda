@@ -14,42 +14,36 @@ export default function Authenticated({ user, header, children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
-                            {/* <div className="shrink-0 flex items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Dashboard
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dalmaceninternos.index')} active={route().current('dalmaceninternos.index')}>
-                                    Almacen Interno
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dalmacenventas.index')} active={route().current('dalmacenventas.index')}>
-                                    Almacen de venta
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dentradaalmacens.index')} active={route().current('dentradaalmacens.index')}>
-                                    Entrada de almacen
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dsalidaalmacens.index')} active={route().current('dsalidaalmacens.index')}>
-                                    Salida de almacen
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dventas.index')} active={route().current('dventas.index')}>
-                                    Venta
-                                </NavLink>
-                            </div> */}
+                            {
+                            <><div className="shrink-0 flex items-center">
+                                    <Link href="/">
+                                        <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    </Link>
+                                </div><div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                        <NavLink href={route('dashboard')} active={route().current('dashboard')}>
+                                            Dashboard
+                                        </NavLink>
+                                    </div><div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                        <NavLink href={route('dalmaceninternos.index')} active={route().current('dalmaceninternos.index')}>
+                                            Almacen Interno
+                                        </NavLink>
+                                    </div><div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                        <NavLink href={route('dalmacenventas.index')} active={route().current('dalmacenventas.index')}>
+                                            Almacen de venta
+                                        </NavLink>
+                                    </div><div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                        <NavLink href={route('dentradaalmacens.index')} active={route().current('dentradaalmacens.index')}>
+                                            Entrada de almacen
+                                        </NavLink>
+                                    </div><div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                        <NavLink href={route('dsalidaalmacens.index')} active={route().current('dsalidaalmacens.index')}>
+                                            Salida de almacen
+                                        </NavLink>
+                                    </div><div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                        <NavLink href={route('dventas.index')} active={route().current('dventas.index')}>
+                                            Venta
+                                        </NavLink>
+                                    </div></>}
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
