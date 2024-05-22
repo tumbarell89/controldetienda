@@ -14,13 +14,16 @@ class NgiroController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
         $ngiros = Ngiro::paginate();
 
-        return view('ngiro.index', compact('ngiros'))
-            ->with('i', ($request->input('page', 1) - 1) * $ngiros->perPage());
+        return inertia('Giro/Index', [
+            'ngiros' => $ngiros,
+            'i' => ($request->input('page', 1) - 1) * $ngiros->perPage()
+        ]);
     }
+    // return inertia('Giro/Index');
 
     /**
      * Show the form for creating a new resource.
@@ -56,11 +59,16 @@ class NgiroController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id): View
+    public function edit($id)
     {
         $ngiro = Ngiro::find($id);
 
-        return view('ngiro.edit', compact('ngiro'));
+        if (!$ngiro) {
+            // Maneja el caso donde el ngiro no existe, por ejemplo redirigiendo o mostrando un mensaje de error
+            return redirect()->route('ngiros.index')->with('error', 'Ngiro not found.');
+        }
+
+        return inertia('Giro/Edit', ['ngiro' => $ngiro]);
     }
 
     /**
