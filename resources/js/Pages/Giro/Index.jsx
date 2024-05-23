@@ -1,6 +1,6 @@
 import Pagination from "@/Components/Pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import ReactPaginate from 'react-paginate';
 
 
@@ -8,8 +8,19 @@ import ReactPaginate from 'react-paginate';
 export default function Index({auth, ngiros, children, queryParams = null, success }){
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
-    Inertia.get(ngiros.path, { page: selectedPage });
+    router.get(ngiros.path, { page: selectedPage });
   };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      router.delete(route('ngiros.destroy', id), {
+        onSuccess: () => {
+          // Handle any additional actions after successful deletion
+        }
+      });
+    }
+  };
+
   return (
     <Authenticated
       user={auth.user}
@@ -83,7 +94,7 @@ export default function Index({auth, ngiros, children, queryParams = null, succe
                               {ngiro.denominacion}
                             </td>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
-                              <form
+                              {/* <form
                                 action={`/ngiros/${ngiro.id}`}
                                 method="POST"
                                 onSubmit={(e) => {
@@ -92,7 +103,7 @@ export default function Index({auth, ngiros, children, queryParams = null, succe
                                     window.confirm("Are you sure to delete?")
                                   ) {
                                     fetch('/ngiros/${ngiro.id}', {
-                                      method: "DELETE",
+                                      method: "destroy",
                                       headers: {
                                         "Content-Type": "application/json",
                                         "X-CSRF-TOKEN": document
@@ -108,7 +119,7 @@ export default function Index({auth, ngiros, children, queryParams = null, succe
                                     });
                                   }
                                 }}
-                              >
+                              > */}
                                 <a
                                   href={`/ngiros/${ngiro.id}`}
                                   className="text-gray-600 font-bold hover:text-gray-900 mr-2"
@@ -122,12 +133,14 @@ export default function Index({auth, ngiros, children, queryParams = null, succe
                                   Edit
                                 </a>
                                 <button
-                                  type="submit"
+                                  type="button"
+                                  onClick={() => handleDelete(ngiro.id)}
                                   className="text-red-600 font-bold hover:text-red-900"
                                 >
+
                                   Delete
                                 </button>
-                              </form>
+                              {/* </form> */}
                             </td>
                           </tr>
                         ))}

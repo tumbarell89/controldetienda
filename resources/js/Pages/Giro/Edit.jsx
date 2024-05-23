@@ -3,20 +3,14 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import ReactPaginate from 'react-paginate';
 
-export default function Index({ auth, ngiros, children, queryParams = null, success }) {
-  const handlePageClick = (data) => {
-    const selectedPage = data.selected + 1;
-    Inertia.get(ngiros.path, { page: selectedPage });
-  };
-
-  const { data, setData, post, errors } = useForm({
-    _method: 'PATCH',
-    ...queryParams // assuming queryParams contain the necessary fields for the form
+export default function Edit({ auth, ngiro, children }) {
+  const { data, setData, patch, errors } = useForm({
+    denominacion: ngiro.denominacion || '',
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('ngiros.update', ngiros.id));
+    patch(route('ngiros.update', ngiro.id));
   };
 
   return (
@@ -56,14 +50,6 @@ export default function Index({ auth, ngiros, children, queryParams = null, succ
                 <div className="mt-8 overflow-x-auto">
                   <div className="max-w-xl py-2 align-middle">
                     <form method="POST" onSubmit={handleSubmit} encType="multipart/form-data">
-                      {Object.keys(data).map(key => (
-                        <input
-                          key={key}
-                          type="hidden"
-                          name={key}
-                          value={data[key]}
-                        />
-                      ))}
                       <input
                         type="hidden"
                         name="_method"
@@ -74,7 +60,7 @@ export default function Index({ auth, ngiros, children, queryParams = null, succ
                         <input
                           type="text"
                           name="denominacion"
-                          value={data.denominacion || ''}
+                          value={data.denominacion}
                           onChange={(e) => setData('denominacion', e.target.value)}
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />

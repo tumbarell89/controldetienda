@@ -28,12 +28,12 @@ class NgiroController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
-    {
-        $ngiro = new Ngiro();
+    public function create()
+{
+    $ngiro = new Ngiro();
+    return inertia('Giro/Create', compact('ngiro'));
+}
 
-        return view('ngiro.create', compact('ngiro'));
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -61,15 +61,11 @@ class NgiroController extends Controller
      */
     public function edit($id)
     {
-        $ngiro = Ngiro::find($id);
-
-        if (!$ngiro) {
-            // Maneja el caso donde el ngiro no existe, por ejemplo redirigiendo o mostrando un mensaje de error
-            return redirect()->route('ngiros.index')->with('error', 'Ngiro not found.');
-        }
+        $ngiro = Ngiro::findOrFail($id);
 
         return inertia('Giro/Edit', ['ngiro' => $ngiro]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -79,14 +75,14 @@ class NgiroController extends Controller
         $ngiro->update($request->validated());
 
         return Redirect::route('ngiros.index')
-            ->with('success', 'Ngiro updated successfully');
+            ->with('success', 'Giro updated successfully');
     }
 
     public function destroy($id): RedirectResponse
     {
-        Ngiro::find($id)->delete();
+        Ngiro::findOrFail($id)->delete();
 
         return Redirect::route('ngiros.index')
-            ->with('success', 'Ngiro deleted successfully');
+            ->with('success', 'Giro deleted successfully');
     }
 }
