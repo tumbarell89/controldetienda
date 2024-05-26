@@ -68,21 +68,32 @@ class DproductoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id): View
+    public function show($id)
     {
-        $dproducto = Dproducto::find($id);
+        $dproducto = Dproducto::with('ntipogiro')->find($id);
 
-        return view('dproducto.show', compact('dproducto'));
+        return inertia('Productos/Show', [
+            'dproducto' => $dproducto,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id): View
+    public function edit($id)
     {
-        $dproducto = Dproducto::find($id);
+        $dproducto = Dproducto::findOrFail($id);
+        $ntipogiros = Ntipogiro::all();
 
-        return view('dproducto.edit', compact('dproducto'));
+        //return view('dproducto.edit', compact('dproducto'));
+
+        //$ntipogiro = Ntipogiro::findOrFail($id);
+    //$ngiros = Ngiro::all(); // Obtener todos los giros disponibles
+
+    return inertia('Productos/Edit', [
+        'dproducto' => $dproducto,
+        'ntipogiros' => $ntipogiros, // Pasar los giros a la vista
+    ]);
     }
 
     /**
@@ -92,8 +103,23 @@ class DproductoController extends Controller
     {
         $dproducto->update($request->validated());
 
-        return Redirect::route('dproductos.index')
-            ->with('success', 'Dproducto updated successfully');
+        // return Redirect::route('dproductos.index')
+        //     ->with('success', 'Dproducto updated successfully');
+
+
+            $request->validate([
+                'denominacion' => 'required|string|max:255',
+                'preciocosto'=>'required|numeric|min:1',
+                'codigocup'=>'required|string|max:100',
+                'codigoproducto'=>'required|string|max:100',
+                'unidadmedida'=>'required|string|max:10',
+                'dtipogiros_id' => 'required|exists:ntipogiros,id', // Asegura que el giro_id existe en la tabla ngiros
+            ]);
+
+            $dproducto->update($request->only('denominacion', 'preciocosto', 'codigocup', 'codigoproducto', 'unidadmedida', 'dtipogiros_id'));
+
+            return Redirect::route('dproductos.index')
+                ->with('success', 'Producto updated successfully');
     }
 
     public function destroy($id): RedirectResponse

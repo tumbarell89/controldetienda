@@ -30,7 +30,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Gestion de clasificador de Tipos de Giros
+          Gestion de Productos
         </h2>
       }
     >

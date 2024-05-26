@@ -18,7 +18,7 @@ export default function Create({ auth, ntipogiros }) {
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Crear Tipo de Giro
+          Crear Producto
         </h2>
       }
     >
