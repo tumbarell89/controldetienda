@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dproducto;
+use App\Models\Ntipogiro;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\DproductoRequest;
@@ -14,33 +15,54 @@ class DproductoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        $dproductos = Dproducto::paginate();
+        $dproductos = Dproducto::with('ntipogiro')->paginate();
 
-        return view('dproducto.index', compact('dproductos'))
-            ->with('i', ($request->input('page', 1) - 1) * $dproductos->perPage());
+        return inertia('Productos/Index', [
+            'dproductos' => $dproductos,
+            'i' => ($request->input('page', 1) - 1) * $dproductos->perPage()
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create()
     {
-        $dproducto = new Dproducto();
-
-        return view('dproducto.create', compact('dproducto'));
+        $ntipogiros = Ntipogiro::all(); // Asumiendo que el modelo es Ngiro
+        return inertia('Productos/Create', [
+            'ntipogiros' => $ntipogiros
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(DproductoRequest $request): RedirectResponse
+    public function store(Request $request)
     {
-        Dproducto::create($request->validated());
+        // Validar la solicitud
+        $validatedData = $request->validate([
+            'denominacion' => 'required|string|max:255',
+            'preciocosto'=>'required|numeric|min:1',
+            'codigocup'=>'required|string|max:100',
+            'codigoproducto'=>'required|string|max:100',
+            'unidadmedida'=>'required|string|max:10',
+            'tipogiro_id' => 'required|exists:ntipogiros,id', // Asegura que el giro_id existe en la tabla ngiros
+        ]);
 
-        return Redirect::route('dproductos.index')
-            ->with('success', 'Dproducto created successfully.');
+        // Crear un nuevo Ntipogiro
+        $dproductos = new Dproducto();
+        $dproductos->denominacion = $validatedData['denominacion'];
+        $dproductos->preciocosto = $validatedData['preciocosto'];
+        $dproductos->codigocup = $validatedData['codigocup'];
+        $dproductos->codigoproducto = $validatedData['codigoproducto'];
+        $dproductos->unidadmedida = $validatedData['unidadmedida'];
+        $dproductos->dtipogiros_id = $validatedData['tipogiro_id']; // Asigna el giro_id del formulario
+        $dproductos->save();
+
+        // Redireccionar a la página de índice con un mensaje de éxito
+        return redirect()->route('dproductos.index')->with('success', 'Producto creado exitosamente.');
     }
 
     /**
