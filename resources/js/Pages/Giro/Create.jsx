@@ -17,11 +17,11 @@ export default function Create({ auth, ngiro, children }) {
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Create Ngiro
+          Gestion de claisificador de Giros
         </h2>
       }
     >
-      <Head title="Create Ngiro" />
+      <Head title="Centro Comercial Arroyo Arenas" />
       <div className="py-12">
         <div className="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">

@@ -1,108 +1,56 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
-// import {
-//   PROJECT_STATUS_CLASS_MAP,
-//   PROJECT_STATUS_TEXT_MAP,
-// } from "@/constants.jsx";
-import TasksTable from "../Task/TasksTable";
-export default function Show({ auth, success, project, tasks, queryParams }) {
+
+export default function Show({ auth, success, ngiro, tasks, queryParams }) {
   return (
-    <AuthenticatedLayout
+    <Authenticated
       user={auth.user}
       header={
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {`Project "${project.name}"`}
-          </h2>
-          <Link
-            href={route("project.edit", project.id)}
-            className="bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
-          >
-            Edit
-          </Link>
-        </div>
+        <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+          Gestion de claisificador de Giros
+        </h2>
       }
     >
-      <Head title={`Project "${project.name}"`} />
+      <Head title="Centro Comercial Arroyo Arenas" />
       <div className="py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <div>
-              <img
-                src={project.image_path}
-                alt=""
-                className="w-full h-64 object-cover"
-              />
-            </div>
-            <div className="p-6 text-gray-900 dark:text-gray-100">
-              <div className="grid gap-1 grid-cols-2 mt-2">
-                <div>
-                  <div>
-                    <label className="font-bold text-lg">Project ID</label>
-                    <p className="mt-1">{project.id}</p>
-                  </div>
-                  <div className="mt-4">
-                    <label className="font-bold text-lg">Project Name</label>
-                    <p className="mt-1">{project.name}</p>
-                  </div>
-
-                  <div className="mt-4">
-                    <label className="font-bold text-lg">Project Status</label>
-                    <p className="mt-1">
-                      <span
-                        className={
-                          "px-2 py-1 rounded text-white " +
-                          PROJECT_STATUS_CLASS_MAP[project.status]
-                        }
-                      >
-                        {PROJECT_STATUS_TEXT_MAP[project.status]}
-                      </span>
-                    </p>
-                  </div>
-                  <div className="mt-4">
-                    <label className="font-bold text-lg">Created By</label>
-                    <p className="mt-1">{project.createdBy.name}</p>
-                  </div>
+        <div className="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
+          <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <div className="w-full">
+              <div className="sm:flex sm:items-center">
+                <div className="sm:flex-auto">
+                  <h1 className="text-base font-semibold leading-6 text-gray-900">Mostrar Giro</h1>
+                  <p className="mt-2 text-sm text-gray-700">Details of Giro.</p>
                 </div>
-                <div>
-                  <div>
-                    <label className="font-bold text-lg">Due Date</label>
-                    <p className="mt-1">{project.due_date}</p>
-                  </div>
-                  <div className="mt-4">
-                    <label className="font-bold text-lg">Create Date</label>
-                    <p className="mt-1">{project.created_at}</p>
-                  </div>
-                  <div className="mt-4">
-                    <label className="font-bold text-lg">Updated By</label>
-                    <p className="mt-1">{project.updatedBy.name}</p>
-                  </div>
+                <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                  <Link
+                    href={route('ngiros.index')}
+                    className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    Back
+                  </Link>
                 </div>
               </div>
-
-              <div className="mt-4">
-                <label className="font-bold text-lg">Project Description</label>
-                <p className="mt-1">{project.description}</p>
+              <div className="flow-root">
+                <div className="mt-8 overflow-x-auto">
+                  <div className="inline-block min-w-full py-2 align-middle">
+                    <div className="mt-6 border-t border-gray-100">
+                      <dl className="divide-y divide-gray-100">
+                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                          <dt className="text-sm font-medium leading-6 text-gray-900">Denominacion</dt>
+                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                            {ngiro.denominacion}
+                          </dd>
+                        </div>
+                        {/* Add more fields as necessary */}
+                      </dl>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div className="pb-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900 dark:text-gray-100">
-              <TasksTable
-                tasks={tasks}
-                success={success}
-                queryParams={queryParams}
-                hideProjectColumn={true}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </AuthenticatedLayout>
+    </Authenticated>
   );
 }

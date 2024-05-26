@@ -14,53 +14,83 @@ class DclienteproveedorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        $dclienteproveedors = Dclienteproveedor::paginate();
+             $dclienteproveedors = Dclienteproveedor::paginate();
 
-        return view('dclienteproveedor.index', compact('dclienteproveedors'))
-            ->with('i', ($request->input('page', 1) - 1) * $dclienteproveedors->perPage());
+            return inertia('ClienteProveedor/Index', [
+                'dclienteproveedors' => $dclienteproveedors,
+                'i' => ($request->input('page', 1) - 1) * $dclienteproveedors->perPage()
+            ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create()
     {
         $dclienteproveedor = new Dclienteproveedor();
-
-        return view('dclienteproveedor.create', compact('dclienteproveedor'));
+        return inertia('ClienteProveedor/Create', [
+            'dclienteproveedor' => $dclienteproveedor
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(DclienteproveedorRequest $request): RedirectResponse
-    {
-        Dclienteproveedor::create($request->validated());
+    public function store(Request $request)
+{
+    $validator = \Validator::make($request->all(), [
+        'denominacion' => 'required|string|max:255',
+        'tipocliente' => 'required|in:1,2', // 1: Proveedor, 2: Cliente
+        'esembarazada' => 'sometimes|boolean',
+        'activo' => 'required|boolean',
+    ]);
 
-        return Redirect::route('dclienteproveedors.index')
-            ->with('success', 'Dclienteproveedor created successfully.');
+    // Agregar validación condicional
+    $validator->sometimes('carnetidentidad', 'required|string|max:255', function ($input) {
+        return $input->tipocliente == '2'; // Requiere 'carnetidentidad' solo si 'tipocliente' es Cliente (2)
+    });
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
     }
+
+    // Crear el cliente/proveedor
+    Dclienteproveedor::create([
+        'denominacion' => $request->denominacion,
+        'tipocliente' => $request->tipocliente,
+        'carnetidentidad' => $request->tipocliente == '2' ? $request->carnetidentidad : null,
+        'esembarazada' => $request->esembarazada ?? false,
+        'activo' => $request->activo,
+    ]);
+
+    return redirect()->route('dclienteproveedors.index')->with('success', 'Dclienteproveedor created successfully');
+}
+
 
     /**
      * Display the specified resource.
      */
-    public function show($id): View
+    public function show($id)
     {
-        $dclienteproveedor = Dclienteproveedor::find($id);
+        $dclienteproveedor = Dclienteproveedor::findOrFail($id);
 
-        return view('dclienteproveedor.show', compact('dclienteproveedor'));
+        return inertia('ClienteProveedor/Show', [
+            'dclienteproveedor' => $dclienteproveedor
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id): View
+    public function edit($id)
     {
-        $dclienteproveedor = Dclienteproveedor::find($id);
+        $dclienteproveedor = Dclienteproveedor::findOrFail($id);
+        return inertia('ClienteProveedor/Edit', [
+            'dclienteproveedor' => $dclienteproveedor
+        ]);
 
-        return view('dclienteproveedor.edit', compact('dclienteproveedor'));
     }
 
     /**

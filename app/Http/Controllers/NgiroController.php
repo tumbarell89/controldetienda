@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\NgiroRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Inertia\Inertia;
 
 class NgiroController extends Controller
 {
@@ -49,12 +50,15 @@ class NgiroController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id): View
+    public function show($id)
     {
-        $ngiro = Ngiro::find($id);
+        $ngiro = Ngiro::findOrFail($id);
 
-        return view('ngiro.show', compact('ngiro'));
+        return Inertia::render('Giro/Show', [
+            'ngiro' => $ngiro,
+        ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
