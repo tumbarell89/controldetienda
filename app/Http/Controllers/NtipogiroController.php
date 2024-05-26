@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ngiro;
 use App\Models\Ntipogiro;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,65 +15,93 @@ class NtipogiroController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View
-    {
-        $ntipogiros = Ntipogiro::paginate();
+    public function index(Request $request)
+{
+    $ntipogiros = Ntipogiro::with('ngiro')->paginate();
 
-        return view('ntipogiro.index', compact('ntipogiros'))
-            ->with('i', ($request->input('page', 1) - 1) * $ntipogiros->perPage());
-    }
+    return inertia('TipoGiros/Index', [
+        'ntipogiros' => $ntipogiros,
+        'i' => ($request->input('page', 1) - 1) * $ntipogiros->perPage()
+    ]);
+}
+
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
-    {
-        $ntipogiro = new Ntipogiro();
+    public function create()
+{
+    $ngiros = Ngiro::all(); // Asumiendo que el modelo es Ngiro
+    return inertia('TipoGiros/Create', [
+        'ngiros' => $ngiros
+    ]);
+}
 
-        return view('ntipogiro.create', compact('ntipogiro'));
-    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(NtipogiroRequest $request): RedirectResponse
+    public function store(Request $request)
     {
-        Ntipogiro::create($request->validated());
+        // Validar la solicitud
+        $validatedData = $request->validate([
+            'denominacion' => 'required|string|max:255',
+            'giro_id' => 'required|exists:ngiros,id', // Asegura que el giro_id existe en la tabla ngiros
+        ]);
 
-        return Redirect::route('ntipogiros.index')
-            ->with('success', 'Ntipogiro created successfully.');
+        // Crear un nuevo Ntipogiro
+        $ntipogiro = new Ntipogiro();
+        $ntipogiro->denominacion = $validatedData['denominacion'];
+        $ntipogiro->ngiros_id = $validatedData['giro_id']; // Asigna el giro_id del formulario
+        $ntipogiro->save();
+
+        // Redireccionar a la página de índice con un mensaje de éxito
+        return redirect()->route('ntipogiros.index')->with('success', 'Tipo de Giro creado exitosamente.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id): View
+    public function show($id)
     {
-        $ntipogiro = Ntipogiro::find($id);
+        $ntipogiro = Ntipogiro::with('ngiro')->findOrFail( $id );
 
-        return view('ntipogiro.show', compact('ntipogiro'));
+        return inertia('TipoGiros/Show', [
+            'ntipogiro' => $ntipogiro,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id): View
-    {
-        $ntipogiro = Ntipogiro::find($id);
+    public function edit($id)
+{
+    $ntipogiro = Ntipogiro::findOrFail($id);
+    $ngiros = Ngiro::all(); // Obtener todos los giros disponibles
 
-        return view('ntipogiro.edit', compact('ntipogiro'));
-    }
+    return inertia('TipoGiros/Edit', [
+        'ntipogiro' => $ntipogiro,
+        'ngiros' => $ngiros, // Pasar los giros a la vista
+    ]);
+}
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(NtipogiroRequest $request, Ntipogiro $ntipogiro): RedirectResponse
+    public function update(Request $request, Ntipogiro $ntipogiro): RedirectResponse
     {
-        $ntipogiro->update($request->validated());
+        $request->validate([
+            'denominacion' => 'required|string|max:255',
+            'ngiros_id' => 'required|exists:ngiros,id',
+        ]);
+
+        $ntipogiro->update($request->only('denominacion', 'ngiros_id'));
 
         return Redirect::route('ntipogiros.index')
             ->with('success', 'Ntipogiro updated successfully');
     }
+
 
     public function destroy($id): RedirectResponse
     {
