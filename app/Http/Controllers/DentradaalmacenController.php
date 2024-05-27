@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dentradaalmacen;
+use App\Models\Dproducto;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\DentradaalmacenRequest;
@@ -14,12 +15,15 @@ class DentradaalmacenController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        $dentradaalmacens = Dentradaalmacen::paginate();
 
-        return view('dentradaalmacen.index', compact('dentradaalmacens'))
-            ->with('i', ($request->input('page', 1) - 1) * $dentradaalmacens->perPage());
+            $dentradaalmacens = Dentradaalmacen::with('nalmacen')->with('dclienteproveedor')->paginate();
+
+            return inertia('EntradaAlmacen/Index', [
+                'dentradaalmacens' => $dentradaalmacens,
+                'i' => ($request->input('page', 1) - 1) * $dentradaalmacens->perPage()
+            ]);
     }
 
     /**

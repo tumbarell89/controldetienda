@@ -3,15 +3,15 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import ReactPaginate from 'react-paginate';
 
-export default function Index({ auth, dproductos, children, queryParams = null, success }) {
+export default function Index({ auth, dentradaalmacens, children, queryParams = null, success }) {
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
-    router.get(dproductos.path, { page: selectedPage });
+    router.get(dentradaalmacens.path, { page: selectedPage });
   };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      router.delete(route('dproductos.destroy', id), {
+      router.delete(route('dentradaalmacens.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
         }
@@ -42,14 +42,14 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-gray-900">
-                    Productos
+                    Gestion de Entradas de productos al Almacen
                   </h1>
-                  <p className="mt-2 text-sm text-gray-700">Lista de Tipos Giros</p>
+                  <p className="mt-2 text-sm text-gray-700">Lista de Facturas entradas</p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                   <a
                     type="button"
-                    href={route('dproductos.create')} active={route().current('dproductos.create')}
+                    href={route('dentradaalmacens.create')} active={route().current('dentradaalmacens.create')}
                     className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm
                      hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
                       focus-visible:outline-indigo-600"
@@ -76,37 +76,25 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Denominacion
+                            Factura
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Precio de Costo
+                            Total
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Codigo CUP
+                            Proveedor
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Codigo de Producto
-                          </th>
-                          <th
-                            scope="col"
-                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
-                          >
-                            Unidad de Medida
-                          </th>
-                          <th
-                            scope="col"
-                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
-                          >
-                            Tipo de Giro
+                            Almacen
                           </th>
                           <th
                             scope="col"
@@ -128,51 +116,45 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                       </thead>
                       <tbody className="divide-y divide-gray-200 bg-white">
                         {
-                          dproductos.data.map((dproducto, index) => (
-                            <tr key={dproducto.id} className="even:bg-gray-50">
+                          dentradaalmacens.data.map((dentradaalmacen, index) => (
+                            <tr key={dentradaalmacen.id} className="even:bg-gray-50">
                               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-gray-900">
                                 {index + 1}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dproducto.denominacion}
+                                {dentradaalmacen.factura}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dproducto.preciocosto}
+                                {dentradaalmacen.total}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dproducto.codigocup}
+                                {dentradaalmacen.nalmacen.denominacion}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dproducto.codigoproducto}
+                                {dentradaalmacen.dclienteproveedor.denominacion}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dproducto.unidadmedida}
+                                {formatDate(dentradaalmacen.created_at)}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dproducto.ntipogiro ? dproducto.ntipogiro.denominacion : 'N/A'}
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {formatDate(dproducto.created_at)}
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {formatDate(dproducto.updated_at)}
+                                {formatDate(dentradaalmacen.updated_at)}
                               </td>
                               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                                 <a
-                                  href={`/dproductos/${dproducto.id}`}
+                                  href={`/dentradaalmacens/${dentradaalmacen.id}`}
                                   className="text-gray-600 font-bold hover:text-gray-900 mr-2"
                                 >
                                   Show
                                 </a>
                                 <a
-                                  href={`/dproductos/${dproducto.id}/edit`}
+                                  href={`/dentradaalmacens/${dentradaalmacen.id}/edit`}
                                   className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
                                 >
                                   Edit
                                 </a>
                                 <button
                                   type="button"
-                                  onClick={() => handleDelete(dproducto.id)}
+                                  onClick={() => handleDelete(dentradaalmacen.id)}
                                   className="text-red-600 font-bold hover:text-red-900"
                                 >
                                   Delete
@@ -189,7 +171,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                         nextLabel={'next'}
                         breakLabel={'...'}
                         breakClassName={'break-me'}
-                        pageCount={dproductos.last_page}
+                        pageCount={dentradaalmacens.last_page}
                         marginPagesDisplayed={2}
                         pageRangeDisplayed={5}
                         onPageChange={handlePageClick}
