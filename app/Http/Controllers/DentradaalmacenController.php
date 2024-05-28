@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dclienteproveedor;
 use App\Models\Dentradaalmacen;
 use App\Models\Dproducto;
+use App\Models\Nalmacen;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\DentradaalmacenRequest;
@@ -29,11 +31,16 @@ class DentradaalmacenController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create()
     {
-        $dentradaalmacen = new Dentradaalmacen();
-
-        return view('dentradaalmacen.create', compact('dentradaalmacen'));
+        $nalmacens = Nalmacen::all(); // Asumiendo que el modelo es Ngiro
+        $dclienteproveedors = Dclienteproveedor::all(); // Asumiendo que el modelo es Ngiro
+        $dproductos = Dproducto::all(); // Asumiendo que el modelo es Ngiro
+        return inertia('EntradaAlmacen/Create', [
+            'nalmacens' => $nalmacens,
+            'dclienteproveedors' => $dclienteproveedors,
+            'dproductos' => $dproductos
+        ]);
     }
 
     /**
