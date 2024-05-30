@@ -48,7 +48,13 @@ class DentradaalmacenController extends Controller
      */
     public function store(DentradaalmacenRequest $request): RedirectResponse
     {
-        Dentradaalmacen::create($request->validated());
+        $entradaAlmacen = Dentradaalmacen::create($request->validated());
+
+        if ($request->has('dproductos')) {
+            foreach ($request->input('dproductos') as $product) {
+                $entradaAlmacen->dproductoentradas()->attach($product['id'], ['cantidad' => $product['cantidad']]);
+            }
+        }
 
         return Redirect::route('dentradaalmacens.index')
             ->with('success', 'Dentradaalmacen created successfully.');
