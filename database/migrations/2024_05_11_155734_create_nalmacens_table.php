@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('nalmacens', function (Blueprint $table) {
             $table->id();
             $table->string('denominacion', 100);
+            $table->integer('tipo');
             $table->boolean('activo');
             $table->timestamps();
         });

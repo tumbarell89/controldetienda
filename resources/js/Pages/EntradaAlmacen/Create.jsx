@@ -1,25 +1,27 @@
 import { Head, Link, useForm } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 
-export default function Create({
-  auth,
-  nalmacens,
-  dclienteproveedors,
-  dproductos,
-}) {
+export default function Create({ auth, nalmacens, dclienteproveedors, dproductos }) {
   const { data, setData, post, errors } = useForm({
     factura: "",
-    total: "",
+    total: 0,
     nalmacens_id: "",
     dproveedor_origen_id: "",
   });
 
   const [selectedProducts, setSelectedProducts] = useState([]);
 
+  useEffect(() => {
+    // Calcular el total cada vez que cambian los productos seleccionados
+    const total = selectedProducts.reduce((sum, product) => {
+      return sum + product.quantity * product.precio;
+    }, 0);
+    setData('total', total);
+  }, [selectedProducts]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Submit the form data along with the selected products
     const formData = {
       ...data,
       products: selectedProducts,
@@ -28,8 +30,11 @@ export default function Create({
   };
 
   const addProduct = (product) => {
-    if (!selectedProducts.some(p => p.id === product.id)) {
-      setSelectedProducts((prevProducts) => [...prevProducts, { ...product, quantity: 1 }]);
+    if (!selectedProducts.some((p) => p.id === product.id)) {
+      setSelectedProducts((prevProducts) => [
+        ...prevProducts,
+        { ...product, quantity: 1, precio: product.precio },
+      ]);
     }
   };
 
@@ -42,7 +47,15 @@ export default function Create({
   const updateProductQuantity = (productId, quantity) => {
     setSelectedProducts((prevProducts) =>
       prevProducts.map((product) =>
-        product.id === productId ? { ...product, quantity } : product
+        product.id === productId ? { ...product, quantity: parseInt(quantity, 10) } : product
+      )
+    );
+  };
+
+  const updateProductPrice = (productId, precio) => {
+    setSelectedProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === productId ? { ...product, precio: parseFloat(precio) } : product
       )
     );
   };
@@ -85,6 +98,12 @@ export default function Create({
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
+                        Precio
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Acción
                       </th>
                     </tr>
@@ -102,6 +121,18 @@ export default function Create({
                             value={product.quantity}
                             onChange={(e) =>
                               updateProductQuantity(product.id, e.target.value)
+                            }
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={product.precio}
+                            onChange={(e) =>
+                              updateProductPrice(product.id, e.target.value)
                             }
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           />
@@ -169,7 +200,7 @@ export default function Create({
                           <input
                             type="number"
                             value={data.total}
-                            onChange={(e) => setData("total", e.target.value)}
+                            readOnly
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           />
                           {errors.total && (
@@ -249,6 +280,12 @@ export default function Create({
                                   scope="col"
                                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                 >
+                                  Precio
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
                                   Acción
                                 </th>
                               </tr>
@@ -258,6 +295,9 @@ export default function Create({
                                 <tr key={dproducto.id}>
                                   <td className="px-6 py-4 whitespace-nowrap">
                                     {dproducto.denominacion}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    {dproducto.preciocosto}
                                   </td>
                                   <td className="px-6 py-4 whitespace-nowrap">
                                     <button
