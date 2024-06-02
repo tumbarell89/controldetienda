@@ -51,15 +51,15 @@ export default function Show({ auth, success, dclienteproveedor, tasks, queryPar
                                 </div>
                                 <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Tipocliente</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{dclienteproveedor.tipocliente === '2' ? 'Cliente' : 'Proveedor'}</dd>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{dclienteproveedor.tipocliente === 2 ? 'Cliente' : 'Proveedor'}</dd>
                                 </div>
                                 <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Esembarazada</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{dclienteproveedor.tipocliente === '2' ? renderIcon(dclienteproveedor.esembarazada): ''}</dd>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{dclienteproveedor.tipocliente === 2 ? renderIcon(dclienteproveedor.esembarazada): ''}</dd>
                                 </div>
                                 <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Carnetidentidad</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{dclienteproveedor.tipocliente === '2' ? dclienteproveedor.carnetidentidad : ''}</dd>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{dclienteproveedor.tipocliente === 2 ? dclienteproveedor.carnetidentidad : ''}</dd>
                                 </div>
                                 <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Activo</dt>

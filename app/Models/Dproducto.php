@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Dproducto extends Model
 {
-    
+
     protected $perPage = 20;
 
     /**
@@ -46,7 +46,7 @@ class Dproducto extends Model
     {
         return $this->belongsTo(\App\Models\Ntipogiro::class, 'dtipogiros_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -54,7 +54,7 @@ class Dproducto extends Model
     {
         return $this->hasMany(\App\Models\Dalmaceninterno::class, 'id', 'dproductos_id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -62,7 +62,7 @@ class Dproducto extends Model
     {
         return $this->hasMany(\App\Models\Dalmacenventa::class, 'id', 'dproductos_id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -70,7 +70,7 @@ class Dproducto extends Model
     {
         return $this->hasMany(\App\Models\Dproductoentrada::class, 'id', 'dproducto_id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -78,7 +78,7 @@ class Dproducto extends Model
     {
         return $this->hasMany(\App\Models\Dproductosalida::class, 'id', 'dproducto_id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -86,5 +86,23 @@ class Dproducto extends Model
     {
         return $this->hasMany(\App\Models\Dventaproducto::class, 'id', 'dproductos_id');
     }
-    
+
+    //class Dproducto extends Model
+//{
+    // protected $fillable = [
+    //     'denominacion', 'preciocosto', // otros campos relevantes
+    // ];
+
+    /**
+     * The warehouse entries that belong to the product.
+     */
+    public function dentradaalmacens()
+    {
+        return $this->belongsToMany(Dentradaalmacen::class, 'dproductoentradas')
+                    ->withPivot('cantidad', 'precio')
+                    ->withTimestamps();
+    }
+//}
+
+
 }

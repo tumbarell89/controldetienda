@@ -33,9 +33,10 @@ class DentradaalmacenController extends Controller
      */
     public function create()
     {
-        $nalmacens = Nalmacen::all(); // Asumiendo que el modelo es Ngiro
-        $dclienteproveedors = Dclienteproveedor::all(); // Asumiendo que el modelo es Ngiro
-        $dproductos = Dproducto::all(); // Asumiendo que el modelo es Ngiro
+        $nalmacens = Nalmacen::where('tipo', 1)->get(); // Filtrar por tipo igual a 1
+        $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
+        $dproductos = Dproducto::all(); // Obtener todos los productos
+
         return inertia('EntradaAlmacen/Create', [
             'nalmacens' => $nalmacens,
             'dclienteproveedors' => $dclienteproveedors,
@@ -48,17 +49,29 @@ class DentradaalmacenController extends Controller
      */
     public function store(DentradaalmacenRequest $request): RedirectResponse
     {
+        // Crear la entrada de almacén
         $entradaAlmacen = Dentradaalmacen::create($request->validated());
 
-        if ($request->has('dproductos')) {
-            foreach ($request->input('dproductos') as $product) {
-                $entradaAlmacen->dproductoentradas()->attach($product['id'], ['cantidad' => $product['cantidad']]);
+        // Verificar si hay productos en la solicitud
+        if ($request->has('products')) {
+            // Recorrer cada producto y adjuntarlo a la entrada de almacén
+            foreach ($request->input('products') as $product) {
+                $entradaAlmacen->dproductoentradas()->attach(
+                    $product['id'],
+                    [
+                        'cantidad' => $product['quantity'],
+                        'precio' => $product['precio']
+                    ]
+                );
             }
         }
 
+
+        // Redireccionar con un mensaje de éxito
         return Redirect::route('dentradaalmacens.index')
-            ->with('success', 'Dentradaalmacen created successfully.');
+            ->with('success', 'Entrada de almacén creada exitosamente.');
     }
+
 
     /**
      * Display the specified resource.
@@ -93,9 +106,19 @@ class DentradaalmacenController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Dentradaalmacen::find($id)->delete();
+        // Encontrar la entrada de almacén
+        $entradaAlmacen = Dentradaalmacen::find($id);
+
+        if ($entradaAlmacen) {
+            // Eliminar las relaciones en la tabla pivot
+            $entradaAlmacen->dproductoentradas()->detach();
+
+            // Eliminar la entrada de almacén
+            $entradaAlmacen->delete();
+        }
 
         return Redirect::route('dentradaalmacens.index')
-            ->with('success', 'Dentradaalmacen deleted successfully');
+            ->with('success', 'Entrada de almacén eliminada correctamente');
     }
+
 }

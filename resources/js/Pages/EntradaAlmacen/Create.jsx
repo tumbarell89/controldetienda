@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
+import Productosmodal from "@/Components/Productosmodal";
 
 export default function Create({ auth, nalmacens, dclienteproveedors, dproductos }) {
   const { data, setData, post, errors } = useForm({
@@ -8,32 +9,36 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
     total: 0,
     nalmacens_id: "",
     dproveedor_origen_id: "",
+    products: [] // Inicializar el array de productos aquí
   });
 
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     // Calcular el total cada vez que cambian los productos seleccionados
     const total = selectedProducts.reduce((sum, product) => {
       return sum + product.quantity * product.precio;
     }, 0);
-    setData('total', total);
+    // setData('total', total);
+    // setData('products', selectedProducts);
+    setData({
+      ...data,
+      total: total,
+      products: selectedProducts
+    });// Actualizar los productos en los datos del formulario
   }, [selectedProducts]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = {
-      ...data,
-      products: selectedProducts,
-    };
-    post(route("dentradaalmacens.store"), formData);
+    post(route("dentradaalmacens.store"));
   };
 
   const addProduct = (product) => {
     if (!selectedProducts.some((p) => p.id === product.id)) {
       setSelectedProducts((prevProducts) => [
         ...prevProducts,
-        { ...product, quantity: 1, precio: product.precio },
+        { ...product, quantity: 1, precio: product.preciocosto },
       ]);
     }
   };
@@ -73,9 +78,9 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
       <div className="py-12">
         <div className="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <div className="flex flex-col md:flex-row justify-between">
+            <div className="flex flex-col md:flex-row justify-between space-y-6 md:space-y-0 md:space-x-6">
               {/* Tabla de productos seleccionados */}
-              <div className="w-full md:w-1/3 mb-4 md:mb-0">
+              <div className="w-full md:w-2/4">
                 <h3 className="text-lg font-medium leading-6 text-gray-900">
                   Productos seleccionados
                 </h3>
@@ -151,9 +156,8 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
                   </tbody>
                 </table>
               </div>
-
               {/* Formulario */}
-              <div className="w-full md:w-2/3">
+              <div className="w-full md:w-2/4">
                 <div className="sm:flex sm:items-center">
                   <div className="sm:flex-auto">
                     <h1 className="text-base font-semibold leading-6 text-gray-900">
@@ -166,7 +170,7 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
                   <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Link
                       href={route("ngiros.index")}
-                      className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className="block rounded-md bg-indigo-600 py-2 px-4 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Volver
                     </Link>
@@ -233,7 +237,6 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
                             </p>
                           )}
                         </div>
-
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700">
                             Proveedor de productos
@@ -261,62 +264,16 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
                             </p>
                           )}
                         </div>
-
-                        {/* Tabla de productos disponibles */}
+                        {/* Botón para abrir el modal */}
                         <div className="mb-4">
-                          <h3 className="text-lg font-medium leading-6 text-gray-900">
-                            Productos disponibles
-                          </h3>
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                              <tr>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                  Nombre
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                  Precio
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                  Acción
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {dproductos.map((dproducto) => (
-                                <tr key={dproducto.id}>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    {dproducto.denominacion}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    {dproducto.preciocosto}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <button
-                                      type="button"
-                                      onClick={() => addProduct(dproducto)}
-                                      className="inline-flex items-center px-3 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 active:bg-green-700 focus:outline-none focus:border-green-700 focus:ring focus:ring-green-300 disabled:opacity-25 transition"
-                                      disabled={selectedProducts.some(
-                                        (p) => p.id === dproducto.id
-                                      )}
-                                    >
-                                      Añadir
-                                    </button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                          <button
+                            type="button"
+                            onClick={() => setIsModalOpen(true)}
+                            className="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 active:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-300 disabled:opacity-25 transition"
+                          >
+                            Añadir Productos Disponibles
+                          </button>
                         </div>
-
                         <div className="flex items-center justify-end mt-4">
                           <button
                             type="submit"
@@ -330,11 +287,67 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
       </div>
+
+      {/* Productosmodal */}
+      <Productosmodal isOpen={isModalOpen} setIsOpen={setIsModalOpen}>
+        <h3 className="text-lg font-medium leading-6 text-gray-900">
+          Productos disponibles
+        </h3>
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Nombre
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Precio
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Acción
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {dproductos.map((dproducto) => (
+              <tr key={dproducto.id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {dproducto.denominacion}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {dproducto.preciocosto}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addProduct(dproducto);
+                    }}
+                    className="inline-flex items-center px-3 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 active:bg-green-700 focus:outline-none focus:border-green-700 focus:ring focus:ring-green-300 disabled:opacity-25 transition"
+                    disabled={selectedProducts.some(
+                      (p) => p.id === dproducto.id
+                    )}
+                  >
+                    Añadir
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Productosmodal>
     </Authenticated>
   );
 }

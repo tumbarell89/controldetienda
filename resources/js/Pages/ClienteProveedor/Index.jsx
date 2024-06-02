@@ -122,13 +122,13 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
                               {dclienteproveedor.denominacion}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {dclienteproveedor.tipocliente === '2' ? 'Cliente' : 'Proveedor'}
+                              {dclienteproveedor.tipocliente === 2 ? 'Cliente' : 'Proveedor'}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {dclienteproveedor.tipocliente === '2' ? renderIcon(dclienteproveedor.esembarazada): ''}
+                              {dclienteproveedor.tipocliente === 2 ? renderIcon(dclienteproveedor.esembarazada): ''}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {dclienteproveedor.tipocliente === '2' ? dclienteproveedor.carnetidentidad : ''}
+                              {dclienteproveedor.tipocliente === 2 ? dclienteproveedor.carnetidentidad : ''}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                               {renderIcon(dclienteproveedor.activo)}

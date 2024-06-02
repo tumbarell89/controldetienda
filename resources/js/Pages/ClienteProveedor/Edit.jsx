@@ -78,7 +78,7 @@ export default function Edit({ auth, dclienteproveedor }) {
                                   type="radio"
                                   name="tipocliente"
                                   value="1"
-                                  checked={data.tipocliente === '1'}
+                                  checked={data.tipocliente === 1}
                                   onChange={e => setData('tipocliente', e.target.value)}
                                   className="form-radio"
                                 />
@@ -91,7 +91,7 @@ export default function Edit({ auth, dclienteproveedor }) {
                                   type="radio"
                                   name="tipocliente"
                                   value="2"
-                                  checked={data.tipocliente === '2'}
+                                  checked={data.tipocliente === 2}
                                   onChange={e => setData('tipocliente', e.target.value)}
                                   className="form-radio"
                                 />
@@ -102,7 +102,7 @@ export default function Edit({ auth, dclienteproveedor }) {
                           {errors.tipocliente && <p className="mt-2 text-sm text-red-600">{errors.tipocliente}</p>}
                         </div>
 
-                        {data.tipocliente === '2' && (
+                        {data.tipocliente === 2 && (
                           <div>
                             <div>
                               <label htmlFor="carnetidentidad" className="block text-sm font-medium text-gray-700">

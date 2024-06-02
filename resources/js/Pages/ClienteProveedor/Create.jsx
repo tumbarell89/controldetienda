@@ -102,7 +102,7 @@ export default function Create({ auth, dclienteproveedor }) {
                           {errors.tipocliente && <p className="mt-2 text-sm text-red-600">{errors.tipocliente}</p>}
                         </div>
 
-                        {data.tipocliente === '2' && (
+                        {data.tipocliente === 2 && (
                           <div>
                           <div>
                             <label htmlFor="carnetidentidad" className="block text-sm font-medium text-gray-700">

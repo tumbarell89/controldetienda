@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Dentradaalmacen extends Model
 {
-    
+
     protected $perPage = 20;
 
     /**
@@ -41,7 +41,7 @@ class Dentradaalmacen extends Model
     {
         return $this->belongsTo(\App\Models\Dclienteproveedor::class, 'dproveedor_origen_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -49,13 +49,20 @@ class Dentradaalmacen extends Model
     {
         return $this->belongsTo(\App\Models\Nalmacen::class, 'nalmacens_id', 'id');
     }
-    
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+
+    // /**
+    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    //  */
+    // public function dproductoentradas()
+    // {
+    //     return $this->hasMany(\App\Models\Dproductoentrada::class, 'id', 'dentradaalmacen_id');
+    // }
+
     public function dproductoentradas()
     {
-        return $this->hasMany(\App\Models\Dproductoentrada::class, 'id', 'dentradaalmacen_id');
+        return $this->belongsToMany(Dproducto::class, 'dproductoentradas')
+                    ->withPivot('cantidad', 'precio')
+                    ->withTimestamps();
     }
-    
+
 }

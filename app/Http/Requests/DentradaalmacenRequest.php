@@ -19,13 +19,28 @@ class DentradaalmacenRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-			'factura' => 'required|string',
-			'total' => 'required',
-			'nalmacens_id' => 'required',
-			'dproveedor_origen_id' => 'required',
-        ];
-    }
+    // public function rules(): array
+    // {
+    //     return [
+	// 		'factura' => 'required|string',
+	// 		'total' => 'required',
+	// 		'nalmacens_id' => 'required',
+	// 		'dproveedor_origen_id' => 'required',
+    //     ];
+    // }
+
+    public function rules()
+{
+    return [
+        'factura' => 'required|string|max:255',
+        'total' => 'required|numeric',
+        'nalmacens_id' => 'required|exists:nalmacens,id',
+        'dproveedor_origen_id' => 'required|exists:dclienteproveedors,id',
+        'products' => 'required|array',
+        'products.*.id' => 'required|exists:dproductos,id',
+        'products.*.quantity' => 'required|integer|min:1',
+        'products.*.precio' => 'required|numeric|min:0',
+    ];
+}
+
 }
