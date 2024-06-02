@@ -38,7 +38,7 @@ class DentradaalmacenRequest extends FormRequest
         'dproveedor_origen_id' => 'required|exists:dclienteproveedors,id',
         'products' => 'required|array',
         'products.*.id' => 'required|exists:dproductos,id',
-        'products.*.quantity' => 'required|integer|min:1',
+        'products.*.cantidad' => 'required|integer|min:1',
         'products.*.precio' => 'required|numeric|min:0',
     ];
 }

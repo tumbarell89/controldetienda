@@ -59,7 +59,7 @@ class DentradaalmacenController extends Controller
                 $entradaAlmacen->dproductoentradas()->attach(
                     $product['id'],
                     [
-                        'cantidad' => $product['quantity'],
+                        'cantidad' => $product['cantidad'],
                         'precio' => $product['precio']
                     ]
                 );
@@ -76,32 +76,90 @@ class DentradaalmacenController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id): View
+    public function show($id)
     {
-        $dentradaalmacen = Dentradaalmacen::find($id);
+        $dentradaalmacen = Dentradaalmacen::with('dproductoentradas')->findOrFail($id);
 
-        return view('dentradaalmacen.show', compact('dentradaalmacen'));
+        // Obtener los almacenes, proveedores y productos necesarios
+        $nalmacens = Nalmacen::all();
+        $dclienteproveedors = Dclienteproveedor::all();
+        $dproductos = Dproducto::all();
+
+        // Estructurar los productos con los datos pivot necesarios
+        $productosConPivot = $dentradaalmacen->dproductoentradas->map(function($producto) {
+            return [
+                'id' => $producto->id,
+                'denominacion' => $producto->denominacion,
+                'cantidad' => $producto->pivot->cantidad,
+                'precio' => $producto->pivot->precio,
+            ];
+        });
+
+        // Pasar los datos a la vista de edición
+        return inertia('EntradaAlmacen/Show', [
+            'dentradaalmacen' => $dentradaalmacen,
+            'nalmacens' => $nalmacens,
+            'dclienteproveedors' => $dclienteproveedors,
+            'dproductos' => $dproductos,
+            'productosConPivot' => $productosConPivot, // Pasar los productos con los datos pivot
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id): View
+    public function edit($id)
     {
-        $dentradaalmacen = Dentradaalmacen::find($id);
+        // Obtener la entrada de almacén
+        $dentradaalmacen = Dentradaalmacen::with('dproductoentradas')->findOrFail($id);
 
-        return view('dentradaalmacen.edit', compact('dentradaalmacen'));
+        // Obtener los almacenes, proveedores y productos necesarios
+        $nalmacens = Nalmacen::all();
+        $dclienteproveedors = Dclienteproveedor::all();
+        $dproductos = Dproducto::all();
+
+        // Estructurar los productos con los datos pivot necesarios
+        $productosConPivot = $dentradaalmacen->dproductoentradas->map(function($producto) {
+            return [
+                'id' => $producto->id,
+                'denominacion' => $producto->denominacion,
+                'cantidad' => $producto->pivot->cantidad,
+                'precio' => $producto->pivot->precio,
+            ];
+        });
+
+        // Pasar los datos a la vista de edición
+        return inertia('EntradaAlmacen/Edit', [
+            'dentradaalmacen' => $dentradaalmacen,
+            'nalmacens' => $nalmacens,
+            'dclienteproveedors' => $dclienteproveedors,
+            'dproductos' => $dproductos,
+            'productosConPivot' => $productosConPivot, // Pasar los productos con los datos pivot
+        ]);
     }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(DentradaalmacenRequest $request, Dentradaalmacen $dentradaalmacen): RedirectResponse
+    public function update(DentradaalmacenRequest $request, $id)
     {
+        // Buscar la entrada de almacén existente
+        $dentradaalmacen = Dentradaalmacen::findOrFail($id);
+
+        // Actualizar la entrada de almacén con los datos validados
         $dentradaalmacen->update($request->validated());
 
-        return Redirect::route('dentradaalmacens.index')
-            ->with('success', 'Dentradaalmacen updated successfully');
+        // Verificar si hay productos en la solicitud
+        if ($request->has('products')) {
+            // Sincronizar los productos con la entrada de almacén
+            $productos = collect($request->input('products'))->mapWithKeys(function ($product) {
+                return [$product['id'] => ['cantidad' => $product['cantidad'], 'precio' => $product['precio']]];
+            });
+            $dentradaalmacen->dproductoentradas()->sync($productos);
+        }
+
+        return redirect()->route('dentradaalmacens.index')->with('success', 'Entrada de almacén actualizada con éxito');
     }
 
     public function destroy($id): RedirectResponse

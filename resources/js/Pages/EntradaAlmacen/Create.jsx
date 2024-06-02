@@ -18,10 +18,8 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
   useEffect(() => {
     // Calcular el total cada vez que cambian los productos seleccionados
     const total = selectedProducts.reduce((sum, product) => {
-      return sum + product.quantity * product.precio;
+      return sum + product.cantidad * product.precio;
     }, 0);
-    // setData('total', total);
-    // setData('products', selectedProducts);
     setData({
       ...data,
       total: total,
@@ -38,7 +36,7 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
     if (!selectedProducts.some((p) => p.id === product.id)) {
       setSelectedProducts((prevProducts) => [
         ...prevProducts,
-        { ...product, quantity: 1, precio: product.preciocosto },
+        { ...product, cantidad: 1, precio: product.preciocosto },
       ]);
     }
   };
@@ -49,10 +47,10 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
     );
   };
 
-  const updateProductQuantity = (productId, quantity) => {
+  const updateProductQuantity = (productId, cantidad) => {
     setSelectedProducts((prevProducts) =>
       prevProducts.map((product) =>
-        product.id === productId ? { ...product, quantity: parseInt(quantity, 10) } : product
+        product.id === productId ? { ...product, cantidad: parseInt(cantidad, 10) } : product
       )
     );
   };
@@ -123,7 +121,7 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
                           <input
                             type="number"
                             min="1"
-                            value={product.quantity}
+                            value={product.cantidad}
                             onChange={(e) =>
                               updateProductQuantity(product.id, e.target.value)
                             }
@@ -169,7 +167,7 @@ export default function Create({ auth, nalmacens, dclienteproveedors, dproductos
                   </div>
                   <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Link
-                      href={route("ngiros.index")}
+                      href={route("dentradaalmacens.index")}
                       className="block rounded-md bg-indigo-600 py-2 px-4 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Volver

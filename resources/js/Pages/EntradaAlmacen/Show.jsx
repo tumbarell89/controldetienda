@@ -1,100 +1,59 @@
-import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
+import Authenticated from "@/Layouts/AuthenticatedLayout";
 
-export default function Show({ auth, success, dproducto, tasks, queryParams }) {
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).toISOString().split('T')[0];
-  };
-
+export default function Show({ auth, dentradaalmacen, nalmacens, dclienteproveedors, dproductos }) {
   return (
     <Authenticated
       user={auth.user}
-      header={
-        <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Gestion de Productos
-        </h2>
-      }
+      header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Detalle de Entrada de Almacén</h2>}
     >
       <Head title="Centro Comercial Arroyo Arenas" />
       <div className="py-12">
         <div className="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <div className="w-full">
-              <div className="sm:flex sm:items-center">
-                <div className="sm:flex-auto">
-                  <h1 className="text-base font-semibold leading-6 text-gray-900">Mostrar Giro</h1>
-                  <p className="mt-2 text-sm text-gray-700">Details of Producto.</p>
-                </div>
-                <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                  <Link
-                    href={route('dproductos.index')}
-                    className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Back
-                  </Link>
+            <div className="flex flex-col md:flex-row justify-between space-y-6 md:space-y-0 md:space-x-6">
+              {/* Detalles de la entrada de almacén */}
+              <div className="w-full md:w-2/4">
+                <h3 className="text-lg font-medium leading-6 text-gray-900">Detalles de la Entrada de Almacén</h3>
+                <div className="mt-4">
+                  <p><strong>Factura:</strong> {dentradaalmacen.factura}</p>
+                  <p><strong>Total:</strong> ${dentradaalmacen.total}</p>
+                  <p><strong>Almacén:</strong> {nalmacens.find(nalmacen => nalmacen.id === dentradaalmacen.nalmacens_id)?.denominacion}</p>
+                  <p><strong>Proveedor:</strong> {dclienteproveedors.find(proveedor => proveedor.id === dentradaalmacen.dproveedor_origen_id)?.denominacion}</p>
                 </div>
               </div>
-              <div className="flow-root">
-                <div className="mt-8 overflow-x-auto">
-                  <div className="inline-block min-w-full py-2 align-middle">
-                    <div className="mt-6 border-t border-gray-100">
-                      <dl className="divide-y divide-gray-100">
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                          <dt className="text-sm font-medium leading-6 text-gray-900">Denominacion</dt>
-                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {dproducto.denominacion}
-                          </dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                          <dt className="text-sm font-medium leading-6 text-gray-900">Precio de Costo</dt>
-                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {dproducto.preciocosto}
-                          </dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                          <dt className="text-sm font-medium leading-6 text-gray-900">Codigo CUP</dt>
-                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {dproducto.codigocup}
-                          </dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                          <dt className="text-sm font-medium leading-6 text-gray-900">Codigo de Producto</dt>
-                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {dproducto.codigoproducto}
-                          </dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                          <dt className="text-sm font-medium leading-6 text-gray-900">Unidad de Medida</dt>
-                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {dproducto.unidadmedida}
-                          </dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                          <dt className="text-sm font-medium leading-6 text-gray-900">Tipo de Giro</dt>
-                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {dproducto.ntipogiro.denominacion}
-                          </dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                          <dt className="text-sm font-medium leading-6 text-gray-900">Fecha de Creacion</dt>
-                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                          {formatDate(dproducto.created_at)}
-                          </dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                          <dt className="text-sm font-medium leading-6 text-gray-900">Fecha de actualizacion</dt>
-                          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                          {formatDate(dproducto.updated_at)}
-                          </dd>
-                        </div>
-                        {/* Add more fields as necessary */}
-                      </dl>
-                    </div>
-                  </div>
-                </div>
+              {/* Tabla de productos */}
+              <div className="w-full md:w-2/4">
+                <h3 className="text-lg font-medium leading-6 text-gray-900">Productos Asociados</h3>
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {dentradaalmacen.dproductoentradas.map((product) => (
+                      <tr key={product.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">{product.denominacion}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{product.pivot.cantidad}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">${product.pivot.precio}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">${(product.pivot.cantidad * product.pivot.precio).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+            </div>
+            <div className="mt-6">
+              <Link
+                href={route("dentradaalmacens.index")}
+                className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition"
+              >
+                Volver
+              </Link>
             </div>
           </div>
         </div>
