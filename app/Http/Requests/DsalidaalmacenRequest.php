@@ -23,12 +23,15 @@ class DsalidaalmacenRequest extends FormRequest
     {
         return [
 			'factura' => 'required|string',
-			'precioventa' => 'required',
 			'total' => 'required',
 			'esventa' => 'required|boolean',
-			'nalmacenes_origen_id' => 'required',
-			'nalmacenes_destino_id' => 'required',
-			'dproveedor_destino_id' => 'required',
+			'nalmacenes_origen_id' => 'required|exists:nalmacens,id',
+			'nalmacenes_destino_id' => 'exists:nalmacens,id',
+			//'dproveedor_destino_id' => 'exists:dclienteproveedors,id',
+            'products' => 'required|array',
+            'products.*.id' => 'required|exists:dproductos,id',
+            'products.*.cantidad' => 'required|integer|min:1',
+            'products.*.precio' => 'required|numeric|min:0',
         ];
     }
 }

@@ -81,7 +81,7 @@ class DentradaalmacenController extends Controller
         $dentradaalmacen = Dentradaalmacen::with('dproductoentradas')->findOrFail($id);
 
         // Obtener los almacenes, proveedores y productos necesarios
-        $nalmacens = Nalmacen::all();
+           $nalmacens = Nalmacen::all();
         $dclienteproveedors = Dclienteproveedor::all();
         $dproductos = Dproducto::all();
 

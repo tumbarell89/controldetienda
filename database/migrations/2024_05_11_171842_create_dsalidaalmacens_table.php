@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('dsalidaalmacens', function (Blueprint $table) {
             $table->id();
             $table->string('factura');
-            $table->double('precioventa');
             $table->double('total');
             $table->boolean('esventa');
             $table->foreignId('nalmacenes_origen_id')->constrained('nalmacens');

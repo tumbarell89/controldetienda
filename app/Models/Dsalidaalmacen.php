@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property $id
  * @property $factura
- * @property $precioventa
  * @property $total
  * @property $esventa
  * @property $nalmacenes_origen_id
@@ -19,8 +18,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property $updated_at
  *
  * @property Dclienteproveedor $dclienteproveedor
- * @property Nalmacen $nalmacen
- * @property Nalmacen $nalmacen
+ * @property Nalmacen $nalmacenorigen
+ * @property Nalmacen $nalmacendestino
  * @property Dproductosalida[] $dproductosalidas
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
@@ -49,7 +48,7 @@ class Dsalidaalmacen extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function nalmacen()
+    public function nalmacendestino()
     {
         return $this->belongsTo(\App\Models\Nalmacen::class, 'nalmacenes_destino_id', 'id');
     }
@@ -57,17 +56,24 @@ class Dsalidaalmacen extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function nalmacens()
+    public function nalmacenorigen()
     {
         return $this->belongsTo(\App\Models\Nalmacen::class, 'nalmacenes_origen_id', 'id');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    // /**
+    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    //  */
+    // public function dproductosalidas()
+    // {
+    //     return $this->hasMany(\App\Models\Dproductosalida::class, 'id', 'dsalidaalmacen_id');
+    // }
+
     public function dproductosalidas()
     {
-        return $this->hasMany(\App\Models\Dproductosalida::class, 'id', 'dsalidaalmacen_id');
+        return $this->belongsToMany(Dproducto::class, 'dproductosalidas')
+                    ->withPivot('cantidad', 'precio')
+                    ->withTimestamps();
     }
 
 }

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DsalidaalmacenRequest;
+use App\Models\Dclienteproveedor;
+use App\Models\Dproducto;
 use App\Models\Dsalidaalmacen;
+use App\Models\Nalmacen;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\DsalidaalmacenRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -14,22 +17,32 @@ class DsalidaalmacenController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        $dsalidaalmacens = Dsalidaalmacen::paginate();
+        $dsalidaalmacens = Dsalidaalmacen::with(['nalmacenorigen', 'nalmacendestino'])->with('dclienteproveedor')->paginate();
 
-        return view('dsalidaalmacen.index', compact('dsalidaalmacens'))
-            ->with('i', ($request->input('page', 1) - 1) * $dsalidaalmacens->perPage());
+        return inertia('SalidaVentas/Index', [
+            'dsalidaalmacens' => $dsalidaalmacens,
+            'i' => ($request->input('page', 1) - 1) * $dsalidaalmacens->perPage()
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create()
     {
-        $dsalidaalmacen = new Dsalidaalmacen();
+        $nalmacenorigen = Nalmacen::all(); // Filtrar por tipo igual a 1
+        $nalmacendestino = Nalmacen::whereNot('tipo', 1)->get(); // Filtrar por tipo igual a 1
+        $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
+        $dproductos = Dproducto::all(); // Obtener todos los productos
 
-        return view('dsalidaalmacen.create', compact('dsalidaalmacen'));
+        return inertia('SalidaVentas/Create', [
+            'nalmacenorigen' => $nalmacenorigen,
+            'nalmacendestino' => $nalmacendestino,
+            'dclienteproveedors' => $dclienteproveedors,
+            'dproductos' => $dproductos
+        ]);
     }
 
     /**
@@ -37,10 +50,27 @@ class DsalidaalmacenController extends Controller
      */
     public function store(DsalidaalmacenRequest $request): RedirectResponse
     {
-        Dsalidaalmacen::create($request->validated());
+        // Crear la entrada de almacén
+        $salidaAlmacen = Dsalidaalmacen::create($request->validated());
 
-        return Redirect::route('dsalidaalmacens.index')
-            ->with('success', 'Dsalidaalmacen created successfully.');
+        // Verificar si hay productos en la solicitud
+        if ($request->has('products')) {
+            // Recorrer cada producto y adjuntarlo a la entrada de almacén
+            foreach ($request->input('products') as $product) {
+                $salidaAlmacen->dproductosalidas()->attach(
+                    $product['id'],
+                    [
+                        'cantidad' => $product['cantidad'],
+                        'precio' => $product['precio']
+                    ]
+                );
+            }
+        }
+
+
+        // Redireccionar con un mensaje de éxito
+        return Redirect::route('dsalidaalmacen.index')
+            ->with('success', 'Salida de almacén creada exitosamente.');
     }
 
     /**

@@ -3,15 +3,16 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import ReactPaginate from 'react-paginate';
 
-export default function Index({ auth, dentradaalmacens, children, queryParams = null, success }) {
+export default function Index({ auth, dsalidaalmacens, children, queryParams = null, success }) {
+  console.log(dsalidaalmacens);
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
-    router.get(dentradaalmacens.path, { page: selectedPage });
+    router.get(dsalidaalmacens.path, { page: selectedPage });
   };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      router.delete(route('dentradaalmacens.destroy', id), {
+      router.delete(route('dsalidaalmacens.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
         }
@@ -30,7 +31,7 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Gestion de Productos
+          Gestion de entrada de productos a ventas
         </h2>
       }
     >
@@ -42,14 +43,14 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-gray-900">
-                    Gestion de Entradas de productos al Almacen
+                    Gestion de salidas del almacen
                   </h1>
-                  <p className="mt-2 text-sm text-gray-700">Lista de Facturas entradas</p>
+                  <p className="mt-2 text-sm text-gray-700">Lista de Facturas de salidas</p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                   <a
                     type="button"
-                    href={route('dentradaalmacens.create')} active={route().current('dentradaalmacens.create')}
+                    href={route('dsalidaalmacens.create')} active={route().current('dsalidaalmacens.create')}
                     className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm
                      hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
                       focus-visible:outline-indigo-600"
@@ -88,13 +89,25 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
+                            Salida a venta
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                          >
                             Proveedor
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Almacen
+                            Almacen Origen
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                          >
+                            Almacen Destino
                           </th>
                           <th
                             scope="col"
@@ -116,45 +129,51 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                       </thead>
                       <tbody className="divide-y divide-gray-200 bg-white">
                         {
-                          dentradaalmacens.data.map((dentradaalmacen, index) => (
-                            <tr key={dentradaalmacen.id} className="even:bg-gray-50">
+                          dsalidaalmacens.data.map((dsalidaalmacen, index) => (
+                            <tr key={dsalidaalmacen.id} className="even:bg-gray-50">
                               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-gray-900">
                                 {index + 1}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dentradaalmacen.factura}
+                                {dsalidaalmacen.factura}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dentradaalmacen.total}
+                                {dsalidaalmacen.total}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dentradaalmacen.dclienteproveedor.denominacion}
+                                {dsalidaalmacen.esventa}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dentradaalmacen.nalmacen.denominacion}
+                                {(dsalidaalmacen.dclienteproveedor)?dsalidaalmacen.dclienteproveedor.denominacion: ''}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {formatDate(dentradaalmacen.created_at)}
+                                {dsalidaalmacen.nalmacenorigen.denominacion}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {formatDate(dentradaalmacen.updated_at)}
+                                {dsalidaalmacen.nalmacendestino.denominacion}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                {formatDate(dsalidaalmacen.created_at)}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                {formatDate(dsalidaalmacen.updated_at)}
                               </td>
                               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                                 <a
-                                  href={`/dentradaalmacens/${dentradaalmacen.id}`}
+                                  href={`/dsalidaalmacens/${dsalidaalmacen.id}`}
                                   className="text-gray-600 font-bold hover:text-gray-900 mr-2"
                                 >
                                   Show
                                 </a>
                                 <a
-                                  href={`/dentradaalmacens/${dentradaalmacen.id}/edit`}
+                                  href={`/dsalidaalmacens/${dsalidaalmacen.id}/edit`}
                                   className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
                                 >
                                   Edit
                                 </a>
                                 <button
                                   type="button"
-                                  onClick={() => handleDelete(dentradaalmacen.id)}
+                                  onClick={() => handleDelete(dsalidaalmacen.id)}
                                   className="text-red-600 font-bold hover:text-red-900"
                                 >
                                   Delete
@@ -171,7 +190,7 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                         nextLabel={'next'}
                         breakLabel={'...'}
                         breakClassName={'break-me'}
-                        pageCount={dentradaalmacens.last_page}
+                        pageCount={dsalidaalmacens.last_page}
                         marginPagesDisplayed={2}
                         pageRangeDisplayed={5}
                         onPageChange={handlePageClick}
