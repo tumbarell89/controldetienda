@@ -26,6 +26,15 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
     return new Date(dateString).toISOString().split('T')[0];
   };
 
+  const renderIcon = (value) => {
+    if (value === true) {
+      return <span className="text-green-600">✔️</span>;
+    } else if (value === false) {
+      return <span className="text-red-600">❌</span>;
+    } else {
+      return null;
+    }
+  };
   return (
     <Authenticated
       user={auth.user}
@@ -141,7 +150,7 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
                                 {dsalidaalmacen.total}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dsalidaalmacen.esventa}
+                                { renderIcon(dsalidaalmacen.esventa)}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {(dsalidaalmacen.dclienteproveedor)?dsalidaalmacen.dclienteproveedor.denominacion: ''}

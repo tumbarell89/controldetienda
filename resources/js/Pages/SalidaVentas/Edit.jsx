@@ -3,19 +3,15 @@ import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Productosmodal from "@/Components/Productosmodal";
 
-export default function Edit({
-  auth,
-  dentradaalmacen,
-  nalmacens,
-  dclienteproveedors,
-  dproductos,
-}) {
+export default function Edit({ auth, dsalidaalmacen, nalmacenorigen, nalmacendestino, dclienteproveedors, dproductos }) {
   const { data, setData, put, errors } = useForm({
-    factura: dentradaalmacen.factura,
-    total: dentradaalmacen.total,
-    nalmacens_id: dentradaalmacen.nalmacens_id,
-    dproveedor_origen_id: dentradaalmacen.dproveedor_origen_id,
-    products: dentradaalmacen.dproductoentradas, // Obtener los productos asociados a la entrada de almacén
+    factura: dsalidaalmacen.factura || "",
+    total: dsalidaalmacen.total || 0,
+    nalmacenes_origen_id: dsalidaalmacen.nalmacenes_origen_id || "",
+    nalmacenes_destino_id: dsalidaalmacen.nalmacenes_destino_id || "",
+    dproveedor_destino_id: dsalidaalmacen.dproveedor_destino_id || "",
+    esventa: dsalidaalmacen.esventa || "",
+    products: dsalidaalmacen.dproductosalidas || [] // Inicializar el array de productos aquí
   });
 
   const [selectedProducts, setSelectedProducts] = useState(data.products);
@@ -41,7 +37,7 @@ export default function Edit({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    put(route("dentradaalmacens.update", dentradaalmacen.id)); // Enviar el formulario para actualizar la entrada de almacén
+    put(route("dsalidaalmacens.update", dsalidaalmacen.id));
   };
 
   const addProduct = (product) => {
@@ -84,7 +80,7 @@ export default function Edit({
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Editar Entrada de Almacén
+          Editar salida de Almacen
         </h2>
       }
     >
@@ -175,15 +171,15 @@ export default function Edit({
                 <div className="sm:flex sm:items-center">
                   <div className="sm:flex-auto">
                     <h1 className="text-base font-semibold leading-6 text-gray-900">
-                      Editar Entrada de Almacén
+                      Editar Salida de Almacen
                     </h1>
                     <p className="mt-2 text-sm text-gray-700">
-                      Editar una entrada de almacén existente.
+                      Editar la salida de almacén.
                     </p>
                   </div>
                   <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Link
-                      href={route("dentradaalmacens.index")}
+                      href={route("dsalidaalmacens.index")}
                       className="block rounded-md bg-indigo-600 py-2 px-4 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Volver
@@ -229,59 +225,112 @@ export default function Edit({
                         </div>
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700">
-                            Almacenes de entrada disponibles
+                            Almacenes disponibles origen
                           </label>
                           <select
-                            value={data.nalmacens_id}
+                            value={data.nalmacenes_origen_id}
                             onChange={(e) =>
-                              setData("nalmacens_id", e.target.value)
+                              setData("nalmacenes_origen_id", e.target.value)
                             }
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           >
                             <option value="">Selecciona un almacén</option>
-                            {nalmacens.map((nalmacen) => (
+                            {nalmacenorigen.map((nalmacen) => (
                               <option key={nalmacen.id} value={nalmacen.id}>
                                 {nalmacen.denominacion}
                               </option>
                             ))}
                           </select>
-                          {errors.nalmacens_id && (
+                          {errors.nalmacenes_origen_id && (
                             <p className="mt-2 text-sm text-red-600">
-                              {errors.nalmacens_id}
+                              {errors.nalmacenes_origen_id}
                             </p>
+                          )}
+                        </div>
+                        {data.esventa && (
+                          <div>
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700">
+                                Almacenes disponibles de destino
+                              </label>
+                              <select
+                                value={data.nalmacenes_destino_id}
+                                onChange={(e) =>
+                                  setData("nalmacenes_destino_id", e.target.value)
+                                }
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              >
+                                <option value="">Selecciona un almacén</option>
+                                {nalmacendestino.map((nalmacen) => (
+                                  <option key={nalmacen.id} value={nalmacen.id}>
+                                    {nalmacen.denominacion}
+                                  </option>
+                                ))}
+                              </select>
+                              {errors.nalmacenes_destino_id && (
+                                <p className="mt-2 text-sm text-red-600">
+                                  {errors.nalmacenes_destino_id}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">
+                            Es venta?
+                          </label>
+                          <div className="mt-2">
+                            <label className="inline-flex items-center">
+                              <input
+                                type="checkbox"
+                                name="esventa"
+                                checked={data.esventa}
+                                onChange={(e) => setData("esventa", e.target.checked)}
+                                className="form-checkbox"
+                              />
+                              <span className="ml-2">Es venta</span>
+                            </label>
+                          </div>
+                          {errors.esventa && (
+                            <p className="mt-2 text-sm text-red-600">{errors.esventa}</p>
                           )}
                         </div>
 
-                        <div className="mb-4">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Proveedor de productos
-                          </label>
-                          <select
-                            value={data.dproveedor_origen_id}
-                            onChange={(e) =>
-                              setData("dproveedor_origen_id", e.target.value)
-                            }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          >
-                            <option value="">Selecciona un proveedor</option>
-                            {dclienteproveedors.map((dclienteproveedor) => (
-                              <option
-                                key={dclienteproveedor.id}
-                                value={dclienteproveedor.id}
+                        {!data.esventa && (
+                          <div>
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700">
+                                Destino de los productos
+                              </label>
+                              <select
+                                value={data.dproveedor_destino_id}
+                                onChange={(e) =>
+                                  setData("dproveedor_destino_id", e.target.value)
+                                }
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                               >
-                                {dclienteproveedor.denominacion}
-                              </option>
-                            ))}
-                          </select>
-                          {errors.dproveedor_origen_id && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {errors.dproveedor_origen_id}
-                            </p>
-                          )}
-                        </div>
+                                <option value="">Selecciona un destinatario</option>
+                                {dclienteproveedors.map((dclienteproveedor) => (
+                                  <option
+                                    key={dclienteproveedor.id}
+                                    value={dclienteproveedor.id}
+                                  >
+                                    {dclienteproveedor.denominacion}
+                                  </option>
+                                ))}
+                              </select>
+                              {errors.dproveedor_destino_id && (
+                                <p className="mt-2 text-sm text-red-600">
+                                  {errors.dproveedor_destino_id}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Botón para abrir el modal */}
                         <div className="mb-4">
+                          <div></div>
                           <button
                             type="button"
                             onClick={() => setIsModalOpen(true)}
@@ -290,7 +339,6 @@ export default function Edit({
                             Añadir Productos Disponibles
                           </button>
                         </div>
-
                         <div className="flex items-center justify-end mt-4">
                           <button
                             type="submit"

@@ -76,39 +76,110 @@ class DsalidaalmacenController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id): View
+    public function show($id)
     {
-        $dsalidaalmacen = Dsalidaalmacen::find($id);
+        // Obtener la entrada de almacén
+        $dsalidaalmacen = Dsalidaalmacen::with('dproductosalidas')->findOrFail($id);
 
-        return view('dsalidaalmacen.show', compact('dsalidaalmacen'));
+        // Obtener los almacenes, proveedores y productos necesarios
+        $nalmacenorigen = Nalmacen::all(); // Filtrar por tipo igual a 1
+        $nalmacendestino = Nalmacen::whereNot('tipo', 1)->get(); // Filtrar por tipo igual a 1
+        $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
+        $dproductos = Dproducto::all();
+
+        // Estructurar los productos con los datos pivot necesarios
+        $productosConPivot = $dsalidaalmacen->dproductosalidas->map(function($producto) {
+            return [
+                'id' => $producto->id,
+                'denominacion' => $producto->denominacion,
+                'cantidad' => $producto->pivot->cantidad,
+                'precio' => $producto->pivot->precio,
+            ];
+        });
+        //var_dump($productosConPivot);die;
+        // Pasar los datos a la vista de edición
+        return inertia('SalidaVentas/Show', [
+            'dsalidaalmacen' => $dsalidaalmacen,
+            'nalmacenorigen' => $nalmacenorigen,
+            'nalmacendestino' => $nalmacendestino,
+            'dclienteproveedors' => $dclienteproveedors,
+            'dproductos' => $dproductos,
+            'productosConPivot' => $productosConPivot, // Pasar los productos con los datos pivot
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id): View
+    public function edit($id)
     {
-        $dsalidaalmacen = Dsalidaalmacen::find($id);
+        // Obtener la entrada de almacén
+        $dsalidaalmacen = Dsalidaalmacen::with('dproductosalidas')->findOrFail($id);
 
-        return view('dsalidaalmacen.edit', compact('dsalidaalmacen'));
+        // Obtener los almacenes, proveedores y productos necesarios
+        $nalmacenorigen = Nalmacen::all(); // Filtrar por tipo igual a 1
+        $nalmacendestino = Nalmacen::whereNot('tipo', 1)->get(); // Filtrar por tipo igual a 1
+        $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
+        $dproductos = Dproducto::all();
+
+        // Estructurar los productos con los datos pivot necesarios
+        $productosConPivot = $dsalidaalmacen->dproductosalidas->map(function($producto) {
+            return [
+                'id' => $producto->id,
+                'denominacion' => $producto->denominacion,
+                'cantidad' => $producto->pivot->cantidad,
+                'precio' => $producto->pivot->precio,
+            ];
+        });
+        //var_dump($productosConPivot);die;
+        // Pasar los datos a la vista de edición
+        return inertia('SalidaVentas/Edit', [
+            'dsalidaalmacen' => $dsalidaalmacen,
+            'nalmacenorigen' => $nalmacenorigen,
+            'nalmacendestino' => $nalmacendestino,
+            'dclienteproveedors' => $dclienteproveedors,
+            'dproductos' => $dproductos,
+            'productosConPivot' => $productosConPivot, // Pasar los productos con los datos pivot
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(DsalidaalmacenRequest $request, Dsalidaalmacen $dsalidaalmacen): RedirectResponse
+    public function update(DsalidaalmacenRequest $request, $id)
     {
+        // Buscar la entrada de almacén existente
+        $dsalidaalmacen = Dsalidaalmacen::findOrFail($id);
+
+        // Actualizar la entrada de almacén con los datos validados
         $dsalidaalmacen->update($request->validated());
 
-        return Redirect::route('dsalidaalmacens.index')
-            ->with('success', 'Dsalidaalmacen updated successfully');
+        // Verificar si hay productos en la solicitud
+        if ($request->has('products')) {
+            // Sincronizar los productos con la entrada de almacén
+            $productos = collect($request->input('products'))->mapWithKeys(function ($product) {
+                return [$product['id'] => ['cantidad' => $product['cantidad'], 'precio' => $product['precio']]];
+            });
+            $dsalidaalmacen->dproductosalidas()->sync($productos);
+        }
+
+        return redirect()->route('dsalidaalmacens.index')->with('success', 'Salida de almacén actualizada con éxito');
     }
 
     public function destroy($id): RedirectResponse
     {
-        Dsalidaalmacen::find($id)->delete();
+        // Encontrar la entrada de almacén
+        $dsalidaalmacen = Dsalidaalmacen::find($id);
+
+        if ($dsalidaalmacen) {
+            // Eliminar las relaciones en la tabla pivot
+            $dsalidaalmacen->dproductoentradas()->detach();
+
+            // Eliminar la entrada de almacén
+            $dsalidaalmacen->delete();
+        }
 
         return Redirect::route('dsalidaalmacens.index')
-            ->with('success', 'Dsalidaalmacen deleted successfully');
+            ->with('success', 'Salida  de almacén eliminada correctamente');
     }
 }
