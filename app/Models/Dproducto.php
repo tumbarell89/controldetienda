@@ -79,13 +79,13 @@ class Dproducto extends Model
     //     return $this->hasMany(\App\Models\Dproductosalida::class, 'id', 'dproducto_id');
     // }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function dventaproductos()
-    {
-        return $this->hasMany(\App\Models\Dventaproducto::class, 'id', 'dproductos_id');
-    }
+    // /**
+    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    //  */
+    // public function dventaproductos()
+    // {
+    //     return $this->hasMany(\App\Models\Dventaproducto::class, 'id', 'dproductos_id');
+    // }
 
     //class Dproducto extends Model
 //{
@@ -109,6 +109,13 @@ class Dproducto extends Model
     public function dproductosalidas()
     {
         return $this->belongsToMany(Dentradaalmacen::class, 'dproductosalidas')
+                    ->withPivot('cantidad', 'precio')
+                    ->withTimestamps();
+    }
+
+    public function dventaproductos()
+    {
+        return $this->belongsToMany(Dventaproducto::class, 'dventaproductos')
                     ->withPivot('cantidad', 'precio')
                     ->withTimestamps();
     }

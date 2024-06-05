@@ -23,6 +23,7 @@ class DventaRequest extends FormRequest
     {
         return [
 			'codigoconcecutivo' => 'required',
+			'total' => 'required',
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dproducto;
 use App\Models\Dventa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,22 +15,29 @@ class DventaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
         $dventas = Dventa::paginate();
 
-        return view('dventa.index', compact('dventas'))
-            ->with('i', ($request->input('page', 1) - 1) * $dventas->perPage());
+            return inertia('Ventas/Index', [
+                'dventas' => $dventas,
+                'i' => ($request->input('page', 1) - 1) * $dventas->perPage()
+            ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create()
     {
-        $dventa = new Dventa();
+       // $dventa = new Dventa();
 
-        return view('dventa.create', compact('dventa'));
+        //return view('dventa.create', compact('dventa'));
+        $dproductos = Dproducto::all(); // Obtener todos los productos
+
+        return inertia('Ventas/Create', [
+            'dproductos' => $dproductos
+        ]);
     }
 
     /**

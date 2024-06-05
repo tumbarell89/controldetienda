@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Dventa extends Model
 {
-    
+
     protected $perPage = 20;
 
     /**
@@ -29,12 +29,17 @@ class Dventa extends Model
     protected $fillable = ['codigoconcecutivo'];
 
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    // /**
+    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    //  */
     public function dventaproductos()
     {
-        return $this->hasMany(\App\Models\Dventaproducto::class, 'id', 'dventas_id');
+        return $this->belongsToMany(Dproducto::class, 'dventaproductos')
+                    ->withPivot('cantidad', 'precio')
+                    ->withTimestamps();
     }
-    
+    // {
+    //     return $this->hasMany(\App\Models\Dventaproducto::class, 'id', 'dventas_id');
+    // }
+
 }
