@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 
 class DsalidaalmacenController extends Controller
 {
@@ -35,7 +36,10 @@ class DsalidaalmacenController extends Controller
         $nalmacenorigen = Nalmacen::all(); // Filtrar por tipo igual a 1
         $nalmacendestino = Nalmacen::whereNot('tipo', 1)->get(); // Filtrar por tipo igual a 1
         $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
-        $dproductos = Dproducto::all(); // Obtener todos los productos
+        $dproductos = DB::table('dalmaceninternos')
+            ->join('dproductos', 'dproductos.id', '=', 'dalmaceninternos.dproductos_id')
+            ->select('dproductos.denominacion', 'dalmaceninternos.dproductos_id as id', 'dalmaceninternos.precio as preciocosto', 'dalmaceninternos.cantidad')
+            ->get();
 
         return inertia('SalidaVentas/Create', [
             'nalmacenorigen' => $nalmacenorigen,
@@ -44,6 +48,7 @@ class DsalidaalmacenController extends Controller
             'dproductos' => $dproductos
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -55,23 +60,32 @@ class DsalidaalmacenController extends Controller
 
         // Verificar si hay productos en la solicitud
         if ($request->has('products')) {
-            // Recorrer cada producto y adjuntarlo a la entrada de almacén
+            // Recorrer cada producto y validar la cantidad
             foreach ($request->input('products') as $product) {
-                $salidaAlmacen->dproductosalidas()->attach(
-                    $product['id'],
-                    [
-                        'cantidad' => $product['cantidad'],
-                        'precio' => $product['precio']
-                    ]
-                );
+                $dalmaceninterno = Dalmaceninterno::where('dproductos_id', $product['id'])
+                                                ->where('ialmacens_id', $request->input('nalmacenorigen'))
+                                                ->first();
+                if ($dalmaceninterno && $dalmaceninterno->cantidad >= $product['cantidad']) {
+                    $salidaAlmacen->dproductosalidas()->attach(
+                        $product['id'],
+                        [
+                            'cantidad' => $product['cantidad'],
+                            'precio' => $product['precio']
+                        ]
+                    );
+                } else {
+                    // Manejar el caso en que la cantidad no es suficiente
+                    return Redirect::route('dsalidaalmacen.create')
+                        ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['id']]);
+                }
             }
         }
-
 
         // Redireccionar con un mensaje de éxito
         return Redirect::route('dsalidaalmacen.index')
             ->with('success', 'Salida de almacén creada exitosamente.');
     }
+
 
     /**
      * Display the specified resource.
@@ -120,7 +134,10 @@ class DsalidaalmacenController extends Controller
         $nalmacenorigen = Nalmacen::all(); // Filtrar por tipo igual a 1
         $nalmacendestino = Nalmacen::whereNot('tipo', 1)->get(); // Filtrar por tipo igual a 1
         $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
-        $dproductos = Dproducto::all();
+        $dproductos = Dproducto::whereIn('id', function($query) {
+            $query->select('dproductos_id')
+                ->from('dalmaceninternos');
+        })->get(); // Obtener productos que están en dalmaceninternos
 
         // Estructurar los productos con los datos pivot necesarios
         $productosConPivot = $dsalidaalmacen->dproductosalidas->map(function($producto) {
@@ -131,7 +148,7 @@ class DsalidaalmacenController extends Controller
                 'precio' => $producto->pivot->precio,
             ];
         });
-        //var_dump($productosConPivot);die;
+
         // Pasar los datos a la vista de edición
         return inertia('SalidaVentas/Edit', [
             'dsalidaalmacen' => $dsalidaalmacen,
@@ -142,6 +159,7 @@ class DsalidaalmacenController extends Controller
             'productosConPivot' => $productosConPivot, // Pasar los productos con los datos pivot
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -156,15 +174,26 @@ class DsalidaalmacenController extends Controller
 
         // Verificar si hay productos en la solicitud
         if ($request->has('products')) {
+            $productos = [];
+            foreach ($request->input('products') as $product) {
+                $dalmaceninterno = Dalmaceninterno::where('dproductos_id', $product['id'])
+                                                ->where('ialmacens_id', $request->input('nalmacenorigen'))
+                                                ->first();
+                if ($dalmaceninterno && $dalmaceninterno->cantidad >= $product['cantidad']) {
+                    $productos[$product['id']] = ['cantidad' => $product['cantidad'], 'precio' => $product['precio']];
+                } else {
+                    // Manejar el caso en que la cantidad no es suficiente
+                    return Redirect::route('dsalidaalmacen.edit', $id)
+                        ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['id']]);
+                }
+            }
             // Sincronizar los productos con la entrada de almacén
-            $productos = collect($request->input('products'))->mapWithKeys(function ($product) {
-                return [$product['id'] => ['cantidad' => $product['cantidad'], 'precio' => $product['precio']]];
-            });
             $dsalidaalmacen->dproductosalidas()->sync($productos);
         }
 
-        return redirect()->route('dsalidaalmacens.index')->with('success', 'Salida de almacén actualizada con éxito');
+        return redirect()->route('dsalidaalmacen.index')->with('success', 'Salida de almacén actualizada con éxito');
     }
+
 
     public function destroy($id): RedirectResponse
     {

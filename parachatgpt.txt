@@ -1,0 +1,139 @@
+
+tengo estas tres tablas, cuando se inserta una dentradaalmacens se asocian a la misma un grupo de productos que van a la tablas
+dproductoentradas, necesito crear un trigger que cuando se inserten estos productosen esa tabla, los mismos se actualicen o se
+inserten en la tabla de dalmaceninternos, si notas seria nada mas enviar hacia la tabla dalmaceninternos los dproducto_id y si ese
+id esta insertado y tiene el mismo precio actualizar la cantidad sumandole la que se inserto nueva en la anterior tabla
+y si no crearlo como una fila nueva
+necesito que le trigger funcione cuando se actualice , modifique o elimine en dproductoentradas, donde en los casos de
+update o eliminar realizaria este tipo de accion en dalmaceninternos
+CREATE TABLE IF NOT EXISTS public.dentradaalmacens
+(
+    id bigint NOT NULL DEFAULT nextval('dentradaalmacens_id_seq'::regclass),
+    factura character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    total double precision NOT NULL,
+    nalmacens_id bigint NOT NULL,
+    dproveedor_origen_id bigint NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT dentradaalmacens_pkey PRIMARY KEY (id),
+    CONSTRAINT dentradaalmacens_dproveedor_origen_id_foreign FOREIGN KEY (dproveedor_origen_id)
+        REFERENCES public.dclienteproveedors (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT dentradaalmacens_nalmacens_id_foreign FOREIGN KEY (nalmacens_id)
+        REFERENCES public.nalmacens (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+
+CREATE TABLE IF NOT EXISTS public.dproductoentradas
+(
+    id bigint NOT NULL DEFAULT nextval('dproductoentradas_id_seq'::regclass),
+    cantidad double precision NOT NULL,
+    dproducto_id bigint NOT NULL,
+    dentradaalmacen_id bigint NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    precio numeric(19,2),
+    CONSTRAINT dproductoentradas_pkey PRIMARY KEY (id),
+    CONSTRAINT dproductoentradas_dentradaalmacen_id_foreign FOREIGN KEY (dentradaalmacen_id)
+        REFERENCES public.dentradaalmacens (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT dproductoentradas_dproducto_id_foreign FOREIGN KEY (dproducto_id)
+        REFERENCES public.dproductos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE IF NOT EXISTS public.dalmaceninternos
+(
+    id bigint NOT NULL DEFAULT nextval('dalmaceninternos_id_seq'::regclass),
+    cantidad double precision NOT NULL,
+    ialmacens_id bigint NOT NULL,
+    dproductos_id bigint NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    precio numeric(19,2) NOT NULL,
+    CONSTRAINT dalmaceninternos_pkey PRIMARY KEY (id),
+    CONSTRAINT dalmaceninternos_dproductos_id_foreign FOREIGN KEY (dproductos_id)
+        REFERENCES public.dproductos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT dalmaceninternos_ialmacens_id_foreign FOREIGN KEY (ialmacens_id)
+        REFERENCES public.nalmacens (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+----------------------------------------------------------------------
+Respuesta sin errores:
+CREATE OR REPLACE FUNCTION handle_insert_update_dproductoentradas()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        -- Intentar actualizar la cantidad del producto en dalmaceninternos
+        UPDATE dalmaceninternos
+        SET cantidad = cantidad + NEW.cantidad,
+            updated_at = NOW()
+        WHERE dproductos_id = NEW.dproducto_id
+          AND precio = NEW.precio
+          AND ialmacens_id = (SELECT nalmacens_id FROM dentradaalmacens WHERE id = NEW.dentradaalmacen_id);
+
+        -- Si no se actualizó ninguna fila, insertar un nuevo registro
+        IF NOT FOUND THEN
+            INSERT INTO dalmaceninternos (cantidad, ialmacens_id, dproductos_id, precio, created_at, updated_at)
+            VALUES (NEW.cantidad,
+                    (SELECT nalmacens_id FROM dentradaalmacens WHERE id = NEW.dentradaalmacen_id),
+                    NEW.dproducto_id,
+                    NEW.precio,
+                    NOW(),
+                    NOW());
+        END IF;
+    ELSIF TG_OP = 'UPDATE' THEN
+        -- Actualizar la cantidad en dalmaceninternos según la diferencia de cantidad
+        UPDATE dalmaceninternos
+        SET cantidad = cantidad + (NEW.cantidad - OLD.cantidad),
+            updated_at = NOW()
+        WHERE dproductos_id = NEW.dproducto_id
+          AND precio = NEW.precio
+          AND ialmacens_id = (SELECT nalmacens_id FROM dentradaalmacens WHERE id = NEW.dentradaalmacen_id);
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION handle_delete_dproductoentradas()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Restar la cantidad del producto en dalmaceninternos
+    UPDATE dalmaceninternos
+    SET cantidad = cantidad - OLD.cantidad,
+        updated_at = NOW()
+    WHERE dproductos_id = OLD.dproducto_id
+      AND precio = OLD.precio
+      AND ialmacens_id = (SELECT nalmacens_id FROM dentradaalmacens WHERE id = OLD.dentradaalmacen_id);
+
+    -- Eliminar el registro si la cantidad es menor o igual a 0
+    DELETE FROM dalmaceninternos
+    WHERE cantidad <= 0
+      AND dproductos_id = OLD.dproducto_id
+      AND precio = OLD.precio
+      AND ialmacens_id = (SELECT nalmacens_id FROM dentradaalmacens WHERE id = OLD.dentradaalmacen_id);
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger para INSERT y UPDATE
+CREATE TRIGGER after_insert_update_dproductoentradas
+AFTER INSERT OR UPDATE ON dproductoentradas
+FOR EACH ROW
+EXECUTE FUNCTION handle_insert_update_dproductoentradas();
+
+-- Trigger para DELETE
+CREATE TRIGGER after_delete_dproductoentradas
+AFTER DELETE ON dproductoentradas
+FOR EACH ROW
+EXECUTE FUNCTION handle_delete_dproductoentradas();
