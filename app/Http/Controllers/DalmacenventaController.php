@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dalmacenventa;
+use App\Models\Dproducto;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\DalmacenventaRequest;
@@ -14,71 +15,29 @@ class DalmacenventaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        $dalmacenventas = Dalmacenventa::paginate();
-
-        return view('dalmacenventa.index', compact('dalmacenventas'))
-            ->with('i', ($request->input('page', 1) - 1) * $dalmacenventas->perPage());
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): View
-    {
-        $dalmacenventa = new Dalmacenventa();
-
-        return view('dalmacenventa.create', compact('dalmacenventa'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(DalmacenventaRequest $request): RedirectResponse
-    {
-        Dalmacenventa::create($request->validated());
-
-        return Redirect::route('dalmacenventas.index')
-            ->with('success', 'Dalmacenventa created successfully.');
+        //$dalmacenventas = Dalmacenventa::paginate();
+        $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
+                ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
+                ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
+                                'dalmacenventas.created_at', 'dalmacenventas.updated_at',
+                                'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                                'ntipogiros.denominacion as tipogiro')
+                ->paginate();
+        //var_dump($dproductos);die;
+        return inertia('AlmacenVentas/Index', compact('dproductos'))
+            ->with('i', ($request->input('page', 1) - 1) * $dproductos->perPage());
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id): View
+    public function show($id)
     {
-        $dalmacenventa = Dalmacenventa::find($id);
+        $dproducto = Dproducto::with('ntipogiro')->find($id);
 
-        return view('dalmacenventa.show', compact('dalmacenventa'));
+        return inertia('AlmacenVentas/Show', compact('dproducto'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id): View
-    {
-        $dalmacenventa = Dalmacenventa::find($id);
-
-        return view('dalmacenventa.edit', compact('dalmacenventa'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(DalmacenventaRequest $request, Dalmacenventa $dalmacenventa): RedirectResponse
-    {
-        $dalmacenventa->update($request->validated());
-
-        return Redirect::route('dalmacenventas.index')
-            ->with('success', 'Dalmacenventa updated successfully');
-    }
-
-    public function destroy($id): RedirectResponse
-    {
-        Dalmacenventa::find($id)->delete();
-
-        return Redirect::route('dalmacenventas.index')
-            ->with('success', 'Dalmacenventa deleted successfully');
-    }
 }

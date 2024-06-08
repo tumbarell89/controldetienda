@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property $id
  * @property $cantidad
+ * @property $precio
  * @property $ialmacens_id
  * @property $dproductos_id
  * @property $created_at
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Dalmaceninterno extends Model
 {
-    
+
     protected $perPage = 20;
 
     /**
@@ -39,7 +40,7 @@ class Dalmaceninterno extends Model
     {
         return $this->belongsTo(\App\Models\Dproducto::class, 'dproductos_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -47,5 +48,5 @@ class Dalmaceninterno extends Model
     {
         return $this->belongsTo(\App\Models\Nalmacen::class, 'ialmacens_id', 'id');
     }
-    
+
 }

@@ -1,0 +1,96 @@
+Necesito un trigger para cuando se inserte una dsalidaalmacens, la misma lleva asociada un grupo de
+ productos que van a almacenarse a la tabla dproductosalidas, estos productos deben cumplir
+ que su cantidad para almacenarse deba ser menor o igual que la que se encuentre en la tabla
+dalmaceninternos, comparandose para saber que producto se maneja para la comparacion el dproductos_id y el
+precio, pues puede haber un mismo producto repetido en la tabla pero con diferentes precios.
+Despues de insertado si todo sale bien se debe ir a la tabla dalmaceninternos y rebajarle la cantidad al producto insertado,
+e insertar o actualizar el mismo en la tabla dalmacenventas si la dsalidaalmacens que se va insertar
+viene con el valor esventa en true, en caso de eliminarse dsalidaalmacens se debe restaurar las cantidades del
+producto que estaba en dproductosalidas en el dalmaceninternos
+
+CREATE TABLE IF NOT EXISTS public.dsalidaalmacens
+(
+    id bigint NOT NULL DEFAULT nextval('dsalidaalmacens_id_seq'::regclass),
+    factura character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    total double precision NOT NULL,
+    esventa boolean NOT NULL,
+    nalmacenes_origen_id bigint NOT NULL,
+    nalmacenes_destino_id bigint,
+    dproveedor_destino_id bigint,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT dsalidaalmacens_pkey PRIMARY KEY (id),
+    CONSTRAINT dsalidaalmacens_dproveedor_destino_id_foreign FOREIGN KEY (dproveedor_destino_id)
+        REFERENCES public.dclienteproveedors (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT dsalidaalmacens_nalmacenes_destino_id_foreign FOREIGN KEY (nalmacenes_destino_id)
+        REFERENCES public.nalmacens (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT dsalidaalmacens_nalmacenes_origen_id_foreign FOREIGN KEY (nalmacenes_origen_id)
+        REFERENCES public.nalmacens (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE IF NOT EXISTS public.dproductosalidas
+(
+    id bigint NOT NULL DEFAULT nextval('dproductosalidas_id_seq'::regclass),
+    cantidad double precision NOT NULL,
+    precio double precision NOT NULL,
+    dproducto_id bigint NOT NULL,
+    dsalidaalmacen_id bigint NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    precio numeric(19,2) NOT NULL,
+    CONSTRAINT dproductosalidas_pkey PRIMARY KEY (id),
+    CONSTRAINT dproductosalidas_dproducto_id_foreign FOREIGN KEY (dproducto_id)
+        REFERENCES public.dproductos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT dproductosalidas_dsalidaalmacen_id_foreign FOREIGN KEY (dsalidaalmacen_id)
+        REFERENCES public.dsalidaalmacens (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE IF NOT EXISTS public.dalmaceninternos
+(
+    id bigint NOT NULL DEFAULT nextval('dalmaceninternos_id_seq'::regclass),
+    cantidad double precision NOT NULL,
+    ialmacens_id bigint NOT NULL,
+    dproductos_id bigint NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    precio numeric(19,2) NOT NULL,
+    CONSTRAINT dalmaceninternos_pkey PRIMARY KEY (id),
+    CONSTRAINT dalmaceninternos_dproductos_id_foreign FOREIGN KEY (dproductos_id)
+        REFERENCES public.dproductos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT dalmaceninternos_ialmacens_id_foreign FOREIGN KEY (ialmacens_id)
+        REFERENCES public.nalmacens (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+
+
+CREATE TABLE IF NOT EXISTS public.dalmacenventas
+(
+    id bigint NOT NULL DEFAULT nextval('dalmacenventas_id_seq'::regclass),
+    cantidad double precision NOT NULL,
+    precio double precision NOT NULL,
+    valamcens_id bigint NOT NULL,
+    dproductos_id bigint NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT dalmacenventas_pkey PRIMARY KEY (id),
+    CONSTRAINT dalmacenventas_dproductos_id_foreign FOREIGN KEY (dproductos_id)
+        REFERENCES public.dproductos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT dalmacenventas_valamcens_id_foreign FOREIGN KEY (valamcens_id)
+        REFERENCES public.nalmacens (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)

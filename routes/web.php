@@ -3,6 +3,7 @@
 use App\Http\Controllers\DalamaceninternoController;
 use App\Http\Controllers\DalamacenventaController;
 use App\Http\Controllers\DalmaceninternoController;
+use App\Http\Controllers\DalmacenventaController;
 use App\Http\Controllers\DclienteproveedorController;
 use App\Http\Controllers\DentradaalmacenController;
 use App\Http\Controllers\DproductoController;
@@ -42,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('nalmacens', NalmacenController::class);
     Route::resource('dclienteproveedors', DclienteproveedorController::class);
     Route::resource('dalmaceninternos', DalmaceninternoController::class);
-    Route::resource('dalmacenventas', DalmaceninternoController::class);
+    Route::resource('dalmacenventas', DalmacenventaController::class);
     Route::resource('dventas', DventaController::class);
     Route::resource('dentradaalmacens', DentradaalmacenController::class);
     Route::resource('dsalidaalmacens', DsalidaalmacenController::class);

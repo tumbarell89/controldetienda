@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DsalidaalmacenRequest;
+use App\Models\Dalmaceninterno;
 use App\Models\Dclienteproveedor;
 use App\Models\Dproducto;
 use App\Models\Dsalidaalmacen;
@@ -63,8 +64,9 @@ class DsalidaalmacenController extends Controller
             // Recorrer cada producto y validar la cantidad
             foreach ($request->input('products') as $product) {
                 $dalmaceninterno = Dalmaceninterno::where('dproductos_id', $product['id'])
-                                                ->where('ialmacens_id', $request->input('nalmacenorigen'))
+                                                ->where('ialmacens_id', $request->input('nalmacenes_origen_id'))
                                                 ->first();
+
                 if ($dalmaceninterno && $dalmaceninterno->cantidad >= $product['cantidad']) {
                     $salidaAlmacen->dproductosalidas()->attach(
                         $product['id'],
@@ -75,14 +77,14 @@ class DsalidaalmacenController extends Controller
                     );
                 } else {
                     // Manejar el caso en que la cantidad no es suficiente
-                    return Redirect::route('dsalidaalmacen.create')
-                        ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['id']]);
+                    return Redirect::route('dsalidaalmacens.create')
+                        ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['denominacion']]);
                 }
             }
         }
 
         // Redireccionar con un mensaje de éxito
-        return Redirect::route('dsalidaalmacen.index')
+        return Redirect::route('dsalidaalmacens.index')
             ->with('success', 'Salida de almacén creada exitosamente.');
     }
 
@@ -177,13 +179,13 @@ class DsalidaalmacenController extends Controller
             $productos = [];
             foreach ($request->input('products') as $product) {
                 $dalmaceninterno = Dalmaceninterno::where('dproductos_id', $product['id'])
-                                                ->where('ialmacens_id', $request->input('nalmacenorigen'))
+                                                ->where('ialmacens_id', $request->input('nalmacenes_origen_id'))
                                                 ->first();
                 if ($dalmaceninterno && $dalmaceninterno->cantidad >= $product['cantidad']) {
                     $productos[$product['id']] = ['cantidad' => $product['cantidad'], 'precio' => $product['precio']];
                 } else {
                     // Manejar el caso en que la cantidad no es suficiente
-                    return Redirect::route('dsalidaalmacen.edit', $id)
+                    return Redirect::route('dsalidaalmacens.edit', $id)
                         ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['id']]);
                 }
             }
@@ -191,7 +193,7 @@ class DsalidaalmacenController extends Controller
             $dsalidaalmacen->dproductosalidas()->sync($productos);
         }
 
-        return redirect()->route('dsalidaalmacen.index')->with('success', 'Salida de almacén actualizada con éxito');
+        return redirect()->route('dsalidaalmacens.index')->with('success', 'Salida de almacén actualizada con éxito');
     }
 
 
@@ -202,7 +204,7 @@ class DsalidaalmacenController extends Controller
 
         if ($dsalidaalmacen) {
             // Eliminar las relaciones en la tabla pivot
-            $dsalidaalmacen->dproductoentradas()->detach();
+            $dsalidaalmacen->dproductosalidas()->detach();
 
             // Eliminar la entrada de almacén
             $dsalidaalmacen->delete();

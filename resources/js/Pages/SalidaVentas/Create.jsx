@@ -35,13 +35,14 @@ export default function Create({ auth, nalmacenorigen, nalmacendestino, dcliente
   };
 
   const addProduct = (product) => {
-    if (!selectedProducts.some((p) => p.id === product.id)) {
+    if (!selectedProducts.some((p) => p.id === product.id && p.precio === product.preciocosto)) {
       setSelectedProducts((prevProducts) => [
         ...prevProducts,
         { ...product, cantidad: 1, precio: product.preciocosto },
       ]);
     }
   };
+
 
   const removeProduct = (productId) => {
     setSelectedProducts((prevProducts) =>
@@ -239,33 +240,34 @@ export default function Create({ auth, nalmacenorigen, nalmacendestino, dcliente
                         </div>
                         {data.esventa && (
                           <div>
-
-                        <div className="mb-4">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Almacenes disponibles de destino
-                          </label>
-                          <select
-                            value={data.nalmacenes_destino_id}
-                            onChange={(e) =>
-                              setData("nalmacenes_destino_id", e.target.value)
-                            }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          >
-                            <option value="">Selecciona un almacén</option>
-                            {nalmacendestino.map((nalmacen) => (
-                              <option key={nalmacen.id} value={nalmacen.id}>
-                                {nalmacen.denominacion}
-                              </option>
-                            ))}
-                          </select>
-                          {errors.nalmacenes_destino_id && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {errors.nalmacenes_destino_id}
-                            </p>
-                          )}
-                        </div>
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700">
+                                Almacenes disponibles de destino
+                              </label>
+                              <select
+                                value={data.nalmacenes_destino_id}
+                                onChange={(e) =>
+                                  setData(
+                                    "nalmacenes_destino_id",
+                                    e.target.value
+                                  )
+                                }
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              >
+                                <option value="">Selecciona un almacén</option>
+                                {nalmacendestino.map((nalmacen) => (
+                                  <option key={nalmacen.id} value={nalmacen.id}>
+                                    {nalmacen.denominacion}
+                                  </option>
+                                ))}
+                              </select>
+                              {errors.nalmacenes_destino_id && (
+                                <p className="mt-2 text-sm text-red-600">
+                                  {errors.nalmacenes_destino_id}
+                                </p>
+                              )}
+                            </div>
                           </div>
-
                         )}
                         <div>
                           <label className="block text-sm font-medium text-gray-700">
@@ -277,18 +279,23 @@ export default function Create({ auth, nalmacenorigen, nalmacendestino, dcliente
                                 type="checkbox"
                                 name="esventa"
                                 checked={data.esventa}
-                                onChange={e => setData('esventa', e.target.checked)}
+                                onChange={(e) =>
+                                  setData("esventa", e.target.checked)
+                                }
                                 className="form-checkbox"
                               />
                               <span className="ml-2">Es venta</span>
                             </label>
                           </div>
-                          {errors.esventa && <p className="mt-2 text-sm text-red-600">{errors.esventa}</p>}
+                          {errors.esventa && (
+                            <p className="mt-2 text-sm text-red-600">
+                              {errors.esventa}
+                            </p>
+                          )}
                         </div>
 
                         {!data.esventa && (
                           <div>
-
                             <div className="mb-4">
                               <label className="block text-sm font-medium text-gray-700">
                                 Destino de los productos
@@ -296,11 +303,16 @@ export default function Create({ auth, nalmacenorigen, nalmacendestino, dcliente
                               <select
                                 value={data.dproveedor_destino_id}
                                 onChange={(e) =>
-                                  setData("dproveedor_destino_id", e.target.value)
+                                  setData(
+                                    "dproveedor_destino_id",
+                                    e.target.value
+                                  )
                                 }
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                               >
-                                <option value="">Selecciona un destinatario</option>
+                                <option value="">
+                                  Selecciona un destinatario
+                                </option>
                                 {dclienteproveedors.map((dclienteproveedor) => (
                                   <option
                                     key={dclienteproveedor.id}
@@ -378,7 +390,7 @@ export default function Create({ auth, nalmacenorigen, nalmacendestino, dcliente
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {dproductos.map((dproducto) => (
-              <tr key={dproducto.id}>
+              <tr key={`${dproducto.id}-${dproducto.preciocosto}`}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {dproducto.denominacion}
                 </td>
@@ -388,12 +400,12 @@ export default function Create({ auth, nalmacenorigen, nalmacendestino, dcliente
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     type="button"
-                    onClick={() => {
-                      addProduct(dproducto);
-                    }}
+                    onClick={() => addProduct(dproducto)}
                     className="inline-flex items-center px-3 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 active:bg-green-700 focus:outline-none focus:border-green-700 focus:ring focus:ring-green-300 disabled:opacity-25 transition"
                     disabled={selectedProducts.some(
-                      (p) => p.id === dproducto.id
+                      (p) =>
+                        p.id === dproducto.id &&
+                        p.precio === dproducto.preciocosto
                     )}
                   >
                     Añadir
