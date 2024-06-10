@@ -110,7 +110,7 @@ export default function Index({ auth, dventas, children, queryParams = null, suc
                                 {index + 1}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dventa.codigoconcecutivo}
+                                {dventa.codigo}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {dventa.total}

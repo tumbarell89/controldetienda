@@ -3,52 +3,44 @@ import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Productosmodal from "@/Components/Productosmodal";
 
-export default function Edit({
-  auth,
-  dentradaalmacen,
-  nalmacens,
-  dclienteproveedors,
-  dproductos,
-}) {
+export default function Edit({ auth, dproductos, dventa }) {
   const { data, setData, put, errors } = useForm({
-    factura: dentradaalmacen.factura,
-    total: dentradaalmacen.total,
-    nalmacens_id: dentradaalmacen.nalmacens_id,
-    dproveedor_origen_id: dentradaalmacen.dproveedor_origen_id,
-    products: dentradaalmacen.dproductoentradas, // Obtener los productos asociados a la entrada de almacén
+    total: dventa.total || 0,
+    products: dventa.dventaproductos.map(product => ({
+      ...product,
+      cantidad: product.pivot.cantidad,
+      precio: product.pivot.precio
+    })) || []
   });
 
   const [selectedProducts, setSelectedProducts] = useState(data.products);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // Calcular el total cada vez que cambian los productos seleccionados
     const total = selectedProducts.reduce((sum, product) => {
-      return sum + product.pivot.cantidad * product.pivot.precio;
+      return sum + product.cantidad * product.precio;
     }, 0);
-    const listaproduc = selectedProducts.map(product => ({
-      ...product.pivot, // Incluye todas las propiedades dentro de pivot
-      denominacion: product.denominacion, // Incluye propiedades adicionales que no están dentro de pivot
-      id: product.id
-    }));
-
-    setData({
-      ...data,
+    setData(prevData => ({
+      ...prevData,
       total: total,
-      products: listaproduc
-    }); // Actualizar los productos en los datos del formulario
+      products: selectedProducts
+    }));
   }, [selectedProducts]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    put(route("dentradaalmacens.update", dentradaalmacen.id)); // Enviar el formulario para actualizar la entrada de almacén
+    if (data.total === null || data.total === undefined) {
+      console.error('Total no está definido o es null');
+      return;
+    }
+    put(route("dventas.update", dventa.id));
   };
 
   const addProduct = (product) => {
     if (!selectedProducts.some((p) => p.id === product.id)) {
       setSelectedProducts((prevProducts) => [
         ...prevProducts,
-        { ...product, pivot: { cantidad: 1, precio: product.preciocosto } },
+        { ...product, cantidad: 1, precio: product.preciocosto },
       ]);
     }
   };
@@ -62,9 +54,7 @@ export default function Edit({
   const updateProductQuantity = (productId, cantidad) => {
     setSelectedProducts((prevProducts) =>
       prevProducts.map((product) =>
-        product.id === productId
-          ? { ...product, pivot: { ...product.pivot, cantidad: parseInt(cantidad, 10) } }
-          : product
+        product.id === productId ? { ...product, cantidad: parseInt(cantidad, 10) } : product
       )
     );
   };
@@ -72,9 +62,7 @@ export default function Edit({
   const updateProductPrice = (productId, precio) => {
     setSelectedProducts((prevProducts) =>
       prevProducts.map((product) =>
-        product.id === productId
-          ? { ...product, pivot: { ...product.pivot, precio: parseFloat(precio) } }
-          : product
+        product.id === productId ? { ...product, precio: parseFloat(precio) } : product
       )
     );
   };
@@ -84,7 +72,7 @@ export default function Edit({
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Editar Entrada de Almacén
+          Editar venta
         </h2>
       }
     >
@@ -93,7 +81,6 @@ export default function Edit({
         <div className="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
             <div className="flex flex-col md:flex-row justify-between space-y-6 md:space-y-0 md:space-x-6">
-              {/* Tabla de productos seleccionados */}
               <div className="w-full md:w-2/4">
                 <h3 className="text-lg font-medium leading-6 text-gray-900">
                   Productos seleccionados
@@ -137,7 +124,7 @@ export default function Edit({
                           <input
                             type="number"
                             min="1"
-                            value={product.pivot.cantidad}
+                            value={product.cantidad}
                             onChange={(e) =>
                               updateProductQuantity(product.id, e.target.value)
                             }
@@ -149,10 +136,8 @@ export default function Edit({
                             type="number"
                             step="0.01"
                             min="0"
-                            value={product.pivot.precio}
-                            onChange={(e) =>
-                              updateProductPrice(product.id, e.target.value)
-                            }
+                            value={product.precio}
+                            readOnly
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           />
                         </td>
@@ -170,20 +155,19 @@ export default function Edit({
                   </tbody>
                 </table>
               </div>
-              {/* Formulario */}
               <div className="w-full md:w-2/4">
                 <div className="sm:flex sm:items-center">
                   <div className="sm:flex-auto">
                     <h1 className="text-base font-semibold leading-6 text-gray-900">
-                      Editar Entrada de Almacén
+                      Editar Venta
                     </h1>
                     <p className="mt-2 text-sm text-gray-700">
-                      Editar una entrada de almacén existente.
+                      Edita la venta seleccionada.
                     </p>
                   </div>
                   <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Link
-                      href={route("dentradaalmacens.index")}
+                      href={route("dventas.index")}
                       className="block rounded-md bg-indigo-600 py-2 px-4 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Volver
@@ -197,19 +181,11 @@ export default function Edit({
                       <form onSubmit={handleSubmit}>
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700">
-                            Factura
+                           Codigo
                           </label>
-                          <input
-                            type="text"
-                            value={data.factura}
-                            onChange={(e) => setData("factura", e.target.value)}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          />
-                          {errors.factura && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {errors.factura}
-                            </p>
-                          )}
+                          <label className="block text-sm font-medium text-green-700">
+                            {dventa.codigo}
+                          </label>
                         </div>
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700">
@@ -228,60 +204,6 @@ export default function Edit({
                           )}
                         </div>
                         <div className="mb-4">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Almacenes de entrada disponibles
-                          </label>
-                          <select
-                            value={data.nalmacens_id}
-                            onChange={(e) =>
-                              setData("nalmacens_id", e.target.value)
-                            }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          >
-                            <option value="">Selecciona un almacén</option>
-                            {nalmacens.map((nalmacen) => (
-                              <option key={nalmacen.id} value={nalmacen.id}>
-                                {nalmacen.denominacion}
-                              </option>
-                            ))}
-                          </select>
-                          {errors.nalmacens_id && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {errors.nalmacens_id}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="mb-4">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Proveedor de productos
-                          </label>
-                          <select
-                            value={data.dproveedor_origen_id}
-                            onChange={(e) =>
-                              setData("dproveedor_origen_id", e.target.value)
-                            }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          >
-                            <option value="">Selecciona un proveedor</option>
-                            {dclienteproveedors.map((dclienteproveedor) => (
-                              <option
-                                key={dclienteproveedor.id}
-                                value={dclienteproveedor.id}
-                              >
-                                {dclienteproveedor.denominacion}
-                              </option>
-                            ))}
-                          </select>
-                          {errors.dproveedor_origen_id && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {errors.dproveedor_origen_id}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Botón para abrir el modal */}
-                        <div className="mb-4">
                           <button
                             type="button"
                             onClick={() => setIsModalOpen(true)}
@@ -290,13 +212,12 @@ export default function Edit({
                             Añadir Productos Disponibles
                           </button>
                         </div>
-
                         <div className="flex items-center justify-end mt-4">
                           <button
                             type="submit"
                             className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition"
                           >
-                            Actualizar
+                            Guardar Cambios
                           </button>
                         </div>
                       </form>
@@ -309,7 +230,6 @@ export default function Edit({
         </div>
       </div>
 
-      {/* Productosmodal */}
       <Productosmodal isOpen={isModalOpen} setIsOpen={setIsModalOpen}>
         <h3 className="text-lg font-medium leading-6 text-gray-900">
           Productos disponibles
@@ -333,18 +253,27 @@ export default function Edit({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Cantidad
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Acción
               </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {dproductos.map((dproducto) => (
+            {dproductos.data.map((dproducto) => (
               <tr key={dproducto.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {dproducto.denominacion}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {dproducto.preciocosto}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {dproducto.cantidad}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button

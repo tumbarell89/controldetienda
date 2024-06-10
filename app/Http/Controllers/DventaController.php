@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dalmacenventa;
 use App\Models\Dproducto;
 use App\Models\Dventa;
+use App\Models\Dventaproducto;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\DventaRequest;
@@ -30,10 +32,16 @@ class DventaController extends Controller
      */
     public function create()
     {
-       // $dventa = new Dventa();
-
-        //return view('dventa.create', compact('dventa'));
-        $dproductos = Dproducto::all(); // Obtener todos los productos
+        $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
+                ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
+                ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
+                                'dalmacenventas.created_at', 'dalmacenventas.updated_at',
+                                'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                                'ntipogiros.denominacion as tipogiro')
+                ->paginate();
+        //var_dump($dproductos);die;
+        // return inertia('Ventas/Create', compact('dproductos'))
+        //     ->with('i', ($request->input('page', 1) - 1) * $dproductos->perPage());
 
         return inertia('Ventas/Create', [
             'dproductos' => $dproductos
@@ -45,46 +53,154 @@ class DventaController extends Controller
      */
     public function store(DventaRequest $request): RedirectResponse
     {
-        Dventa::create($request->validated());
+        //var_dump($request->all());die;
+        $validated = $request->validated();
+    // Verifica que el total esté presente y no sea null
+    if (!isset($validated['total'])) {
+        return response()->json(['error' => 'Total is required'], 400);
+    }
+    $validated['codigoconcecutivo']= 'codigo generado';
+   //var_dump($validated);die;
+    // var_dump($validated['total']);die;
+    // Crear la venta
+    $venta = Dventa::create([
+        'codigo' => $validated['codigoconcecutivo'],
+        'total' => $validated['total'],
+    ]);
 
+        // Verificar si hay productos en la solicitud
+        if ($request->has('products')) {
+            // Recorrer cada producto y validar la cantidad
+            foreach ($request->input('products') as $product) {
+                $dalmacenventas = Dalmacenventa::where('dproductos_id', $product['id'])
+                                                ->first();
+
+                if ($dalmacenventas && $dalmacenventas->cantidad >= $product['cantidad']) {
+                    $venta->dventaproductos()->attach(
+                        $product['id'],
+                        [
+                            'cantidad' => $product['cantidad'],
+                            'precio' => $product['precio']
+                        ]
+                    );
+                } else {
+                    // Manejar el caso en que la cantidad no es suficiente
+                    return Redirect::route('dventas.create')
+                        ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['denominacion']]);
+                }
+            }
+        }
         return Redirect::route('dventas.index')
             ->with('success', 'Dventa created successfully.');
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id): View
+    public function show($id)
     {
-        $dventa = Dventa::find($id);
+        $dventa = Dventa::with('dventaproductos')->findOrFail($id);
 
-        return view('dventa.show', compact('dventa'));
+        $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
+        ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
+        ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
+                        'dalmacenventas.created_at', 'dalmacenventas.updated_at',
+                        'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                        'ntipogiros.denominacion as tipogiro')
+        ->paginate();
+
+        return inertia('Ventas/Show', [
+            'dventa' => $dventa,
+            'dproductos' => $dproductos
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id): View
+    public function edit($id)
     {
-        $dventa = Dventa::find($id);
+        $dventa = Dventa::with('dventaproductos')->findOrFail($id);
 
-        return view('dventa.edit', compact('dventa'));
+        $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
+                ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
+                ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
+                                'dalmacenventas.created_at', 'dalmacenventas.updated_at',
+                                'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                                'ntipogiros.denominacion as tipogiro')
+                ->paginate();
+
+        return inertia('Ventas/Edit', [
+            'dventa' => $dventa,
+            'dproductos' => $dproductos
+        ]);
     }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(DventaRequest $request, Dventa $dventa): RedirectResponse
+    public function update(DventaRequest $request, $id): RedirectResponse
     {
-        $dventa->update($request->validated());
+        $validated = $request->validated();
+
+        // Verifica que el total esté presente y no sea null
+        if (!isset($validated['total'])) {
+            return response()->json(['error' => 'Total is required'], 400);
+        }
+
+        $dventa = Dventa::findOrFail($id);
+
+        // Actualizar la venta
+        $dventa->update([
+            'total' => $validated['total'],
+        ]);
+
+        // Detach existing products
+        $dventa->dventaproductos()->detach();
+
+        // Verificar si hay productos en la solicitud
+        if ($request->has('products')) {
+            // Recorrer cada producto y validar la cantidad
+            foreach ($request->input('products') as $product) {
+                $dalmacenventas = Dalmacenventa::where('dproductos_id', $product['id'])
+                                                ->first();
+
+                if ($dalmacenventas && $dalmacenventas->cantidad >= $product['cantidad']) {
+                    $dventa->dventaproductos()->attach(
+                        $product['id'],
+                        [
+                            'cantidad' => $product['cantidad'],
+                            'precio' => $product['precio']
+                        ]
+                    );
+                } else {
+                    // Manejar el caso en que la cantidad no es suficiente
+                    return Redirect::route('dventas.edit', $id)
+                        ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['denominacion']]);
+                }
+            }
+        }
 
         return Redirect::route('dventas.index')
-            ->with('success', 'Dventa updated successfully');
+            ->with('success', 'Dventa updated successfully.');
     }
+
 
     public function destroy($id): RedirectResponse
     {
-        Dventa::find($id)->delete();
+        $dventa = Dventa::find($id);
+
+        //$dsalidaalmacen = Dsalidaalmacen::find($id);
+
+        if ($dventa) {
+            // Eliminar las relaciones en la tabla pivot
+            $dventa->dventaproductos()->detach();
+
+            // Eliminar la entrada de almacén
+            $dventa->delete();
+        }
 
         return Redirect::route('dventas.index')
             ->with('success', 'Dventa deleted successfully');

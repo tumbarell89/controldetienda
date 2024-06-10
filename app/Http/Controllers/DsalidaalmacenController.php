@@ -138,7 +138,7 @@ class DsalidaalmacenController extends Controller
         $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
         $dproductos = Dproducto::whereIn('id', function($query) {
             $query->select('dproductos_id')
-                ->from('dalmaceninternos');
+                ->from('dalmacenventas');
         })->get(); // Obtener productos que están en dalmaceninternos
 
         // Estructurar los productos con los datos pivot necesarios

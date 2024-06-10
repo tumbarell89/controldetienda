@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('dventas', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('codigoconcecutivo')->unique();
-            $table->double('codigoconcecutivo');
+            $table->string('codigo')->unique();
+            $table->double('total');
             $table->timestamps();
         });
     }

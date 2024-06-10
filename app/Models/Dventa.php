@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
  * Class Dventa
  *
  * @property $id
- * @property $codigoconcecutivo
+ * @property $codigo
+ * @property $total
  * @property $created_at
  * @property $updated_at
  *
@@ -26,7 +27,7 @@ class Dventa extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['codigoconcecutivo'];
+    protected $fillable = ['codigoconcecutivo', 'total'];
 
 
     // /**

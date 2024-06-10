@@ -22,8 +22,12 @@ class DventaRequest extends FormRequest
     public function rules(): array
     {
         return [
-			'codigoconcecutivo' => 'required',
-			'total' => 'required',
+			// 'codigoconcecutivo' => 'required',
+			'total' => 'required|numeric',
+            'products' => 'required|array',
+            'products.*.id' => 'required|exists:dproductos,id',
+            'products.*.cantidad' => 'required|integer|min:1',
+            'products.*.precio' => 'required|numeric|min:0',
         ];
     }
 }

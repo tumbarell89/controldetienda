@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\DclienteproveedorRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade as PDF;
+use App\Exports\EmbarazadasExport;
 
 class DclienteproveedorController extends Controller
 {
@@ -111,4 +114,31 @@ class DclienteproveedorController extends Controller
         return Redirect::route('dclienteproveedors.index')
             ->with('success', 'Dclienteproveedor deleted successfully');
     }
+
+    public function embarazadas(Request $request)
+    {
+        $embarazadas = Dclienteproveedor::where('esembarazada', true)
+            ->orderBy('activo', 'desc')
+            ->paginate(10);
+
+        return inertia('ClienteProveedor/EmbarazadasIndex', [
+            'embarazadas' => $embarazadas,
+        ]);
+    }
+
+    public function exportEmbarazadasExcel()
+    {
+        return Excel::download(new EmbarazadasExport, 'embarazadas.xlsx');
+    }
+
+    public function exportEmbarazadasPDF()
+    {
+        $embarazadas = Dclienteproveedor::where('esembarazada', true)
+            ->orderBy('activo', 'desc')
+            ->get();
+
+        $pdf = PDF::loadView('embarazadas-pdf', compact('embarazadas'));
+        return $pdf->download('embarazadas.pdf');
+    }
+
 }

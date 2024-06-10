@@ -80,7 +80,7 @@ export default function Authenticated({ user, header, children }) {
                                         <Dropdown.Link href={route('dclienteproveedors.index')}>Cliente Proveedor</Dropdown.Link>
                                         <Dropdown.Link href={route('ngiros.index')}>Giro</Dropdown.Link>
                                         <Dropdown.Link href={route('ntipogiros.index')}>Tipos de Giro</Dropdown.Link>
-                                        <Dropdown.Link href={route('profile.edit')}>Plantilla de embarazadas</Dropdown.Link>
+                                        <Dropdown.Link href={route('dclienteproveedors.embarazadas')}>Plantilla de embarazadas</Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>

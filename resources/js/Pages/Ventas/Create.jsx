@@ -5,9 +5,9 @@ import Productosmodal from "@/Components/Productosmodal";
 
 export default function Create({ auth, dproductos }) {
   const { data, setData, post, errors } = useForm({
-    codigoconcecutivo: "",
+    //codigoconcecutivo: "",
     total: 0,
-    products: [] // Inicializar el array de productos aquí
+    products: []
   });
 
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -18,16 +18,19 @@ export default function Create({ auth, dproductos }) {
     const total = selectedProducts.reduce((sum, product) => {
       return sum + product.cantidad * product.precio;
     }, 0);
-    setData({
-      ...data,
+    setData(prevData => ({
+      ...prevData,
       total: total,
       products: selectedProducts
-    });// Actualizar los productos en los datos del formulario
+    }));
   }, [selectedProducts]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route("dentradaalmacens.store"));
+    if (data.total === null || data.total === undefined) {
+      return;
+    }
+    post(route("dventas.store"));
   };
 
   const addProduct = (product) => {
@@ -75,7 +78,6 @@ export default function Create({ auth, dproductos }) {
         <div className="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
             <div className="flex flex-col md:flex-row justify-between space-y-6 md:space-y-0 md:space-x-6">
-              {/* Tabla de productos seleccionados */}
               <div className="w-full md:w-2/4">
                 <h3 className="text-lg font-medium leading-6 text-gray-900">
                   Productos seleccionados
@@ -132,7 +134,7 @@ export default function Create({ auth, dproductos }) {
                             step="0.01"
                             min="0"
                             value={product.precio}
-                            readOnly="true"
+                            readOnly
                             onChange={(e) =>
                               updateProductPrice(product.id, e.target.value)
                             }
@@ -153,7 +155,6 @@ export default function Create({ auth, dproductos }) {
                   </tbody>
                 </table>
               </div>
-              {/* Formulario */}
               <div className="w-full md:w-2/4">
                 <div className="sm:flex sm:items-center">
                   <div className="sm:flex-auto">
@@ -166,7 +167,7 @@ export default function Create({ auth, dproductos }) {
                   </div>
                   <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Link
-                      href={route("dentradaalmacens.index")}
+                      href={route("dventas.index")}
                       className="block rounded-md bg-indigo-600 py-2 px-4 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Volver
@@ -180,19 +181,12 @@ export default function Create({ auth, dproductos }) {
                       <form onSubmit={handleSubmit}>
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700">
-                           Codigo concecutivo
+                           Codigo
                           </label>
-                          <input
-                            type="text"
-                            value={data.codigoconcecutivo}
-                            onChange={(e) => setData("codigoconcecutivo", e.target.value)}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          />
-                          {errors.codigoconcecutivo && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {errors.codigoconcecutivo}
-                            </p>
-                          )}
+                          <label className="block text-sm font-medium text-green-700">
+                           Este es un valor generado en por el sistema!
+                          </label>
+
                         </div>
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700">
@@ -210,7 +204,6 @@ export default function Create({ auth, dproductos }) {
                             </p>
                           )}
                         </div>
-                        {/* Botón para abrir el modal */}
                         <div className="mb-4">
                           <button
                             type="button"
@@ -238,7 +231,6 @@ export default function Create({ auth, dproductos }) {
         </div>
       </div>
 
-      {/* Productosmodal */}
       <Productosmodal isOpen={isModalOpen} setIsOpen={setIsModalOpen}>
         <h3 className="text-lg font-medium leading-6 text-gray-900">
           Productos disponibles
@@ -262,18 +254,27 @@ export default function Create({ auth, dproductos }) {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Cantidad
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Acción
               </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {dproductos.map((dproducto) => (
+            {dproductos.data.map((dproducto) => (
               <tr key={dproducto.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {dproducto.denominacion}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {dproducto.preciocosto}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {dproducto.cantidad}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button

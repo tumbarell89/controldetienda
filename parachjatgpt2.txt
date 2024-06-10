@@ -94,3 +94,94 @@ CREATE TABLE IF NOT EXISTS public.dalmacenventas
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
+-- Crear la función para manejar la inserción en dproductosalidas
+CREATE OR REPLACE FUNCTION handle_dproductosalidas_insert() RETURNS trigger AS $$
+DECLARE
+    v_salida dsalidaalmacens%ROWTYPE;
+BEGIN
+    -- Obtener los detalles de la salida asociada
+    SELECT * INTO v_salida FROM dsalidaalmacens WHERE id = NEW.dsalidaalmacen_id;
+
+    -- Verificar que la cantidad en dalmaceninternos sea suficiente
+    IF EXISTS (
+        SELECT 1
+        FROM dalmaceninternos
+        WHERE dproductos_id = NEW.dproducto_id
+          AND precio = NEW.precio
+          AND cantidad >= NEW.cantidad
+    ) THEN
+        -- Actualizar la cantidad en dalmaceninternos
+        UPDATE dalmaceninternos
+        SET cantidad = cantidad - NEW.cantidad
+        WHERE dproductos_id = NEW.dproducto_id
+          AND precio = NEW.precio;
+
+        -- Si es una venta, actualizar o insertar en dalmacenventas
+        IF v_salida.esventa THEN
+            IF EXISTS (
+                SELECT 1
+                FROM dalmacenventas
+                WHERE dproductos_id = NEW.dproducto_id
+                  AND precio = NEW.precio
+            ) THEN
+                UPDATE dalmacenventas
+                SET cantidad = cantidad + NEW.cantidad
+                WHERE dproductos_id = NEW.dproducto_id
+                  AND precio = NEW.precio;
+            ELSE
+                INSERT INTO dalmacenventas (cantidad, precio, valamcens_id, dproductos_id, created_at, updated_at)
+                VALUES (NEW.cantidad, NEW.precio, v_salida.nalmacenes_origen_id, NEW.dproducto_id, NOW(), NOW());
+            END IF;
+        END IF;
+    ELSE
+        RAISE EXCEPTION 'Cantidad insuficiente para el producto % con precio %', NEW.dproducto_id, NEW.precio;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Crear el trigger para llamar a la función al insertar en dproductosalidas
+CREATE TRIGGER after_dproductosalidas_insert
+AFTER INSERT ON dproductosalidas
+FOR EACH ROW
+EXECUTE FUNCTION handle_dproductosalidas_insert();
+
+
+-- Crear la función para manejar la eliminación en dproductosalidas
+CREATE OR REPLACE FUNCTION handle_dproductosalidas_delete() RETURNS trigger AS $$
+DECLARE
+    v_salida dsalidaalmacens%ROWTYPE;
+BEGIN
+    -- Obtener los detalles de la salida asociada
+    SELECT * INTO v_salida FROM dsalidaalmacens WHERE id = OLD.dsalidaalmacen_id;
+
+    -- Restaurar la cantidad en dalmaceninternos
+    UPDATE dalmaceninternos
+    SET cantidad = cantidad + OLD.cantidad
+    WHERE dproductos_id = OLD.dproducto_id
+      AND precio = OLD.precio;
+
+    -- Si era una venta, actualizar la cantidad en dalmacenventas
+    IF v_salida.esventa THEN
+        UPDATE dalmacenventas
+        SET cantidad = cantidad - OLD.cantidad
+        WHERE dproductos_id = OLD.dproducto_id
+          AND precio = OLD.precio;
+
+        -- Eliminar el registro de dalmacenventas si la cantidad llega a cero
+        DELETE FROM dalmacenventas
+        WHERE dproductos_id = OLD.dproducto_id
+          AND precio = OLD.precio
+          AND cantidad = 0;
+    END IF;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Crear el trigger para llamar a la función al eliminar en dproductosalidas
+CREATE TRIGGER after_dproductosalidas_delete
+AFTER DELETE ON dproductosalidas
+FOR EACH ROW
+EXECUTE FUNCTION handle_dproductosalidas_delete();
