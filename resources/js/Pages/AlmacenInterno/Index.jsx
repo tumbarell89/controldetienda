@@ -16,7 +16,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
   };
 
   return (
-    <Authenticated
+    <Authenticated className="min-h-screen flex flex-col pt-80 sm:pt-20 px-60 bg-cover bg-center"
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
