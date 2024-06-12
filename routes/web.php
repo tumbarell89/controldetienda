@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('nalmacens', NalmacenController::class);
     Route::resource('dclienteproveedors', DclienteproveedorController::class);
     Route::get('/embarazadas', [DclienteproveedorController::class, 'embarazadas'])->name('dclienteproveedors.embarazadas');
-    Route::get('/embarazadas/export/excel', [DclienteproveedorController::class, 'exportEmbarazadasExcel'])->name('dclienteproveedors.exportExcel');
+    Route::get('/embarazadas/exportExcel', [DclienteproveedorController::class, 'exportExcel'])->name('dclienteproveedors.exportExcel');
     Route::get('/embarazadas/export/pdf', [DclienteproveedorController::class, 'exportEmbarazadasPDF'])->name('dclienteproveedors.exportPDF');
     Route::resource('dalmaceninternos', DalmaceninternoController::class);
     Route::resource('dalmacenventas', DalmacenventaController::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Dclienteproveedor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -126,9 +127,10 @@ class DclienteproveedorController extends Controller
         ]);
     }
 
-    public function exportEmbarazadasExcel()
+    public function exportExcel()
     {
-        return Excel::download(new EmbarazadasExport, 'embarazadas.xlsx');
+        //var_dump('asddad');die;
+        return Excel::download(new EmbarazadasExport, 'embarazadas.xlsx', 'Xlsx');
     }
 
     public function exportEmbarazadasPDF()

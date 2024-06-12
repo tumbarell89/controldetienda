@@ -141,7 +141,12 @@ export default function Authenticated({ user, header, children }) {
 
             {header && (
                 <header className="bg-white shadow">
-                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-3xl font-serif font-bold">Centro Comercial Arroyo Arenassss</div>
+                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6
+                      lg:px-8 text-3xl font-serif font-bold ">
+                        {/* <h1 className='text-primary
+                      shadow-dark-700 shadow-2xl'>Centro Comercial Arroyo Arenas</h1> */}
+                      <h1 class="text-5xl font-extrabold text-primary drop-shadow-lg shadow-black">Centro Comercial Arroyo Arenas</h1>
+                      </div>
             </header>
 
 
