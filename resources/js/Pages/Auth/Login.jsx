@@ -6,6 +6,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
+import ApplicationLogo from '@/Components/ApplicationLogo';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -34,7 +35,7 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="Correo" />
 
                     <TextInput
                         id="email"
@@ -51,7 +52,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value="Contraseña" />
 
                     <TextInput
                         id="password"
@@ -66,7 +67,7 @@ export default function Login({ status, canResetPassword }) {
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="block mt-4">
+                {/* <div className="block mt-4">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -75,8 +76,8 @@ export default function Login({ status, canResetPassword }) {
                         />
                         <span className="ms-2 text-sm text-gray-600">Remember me</span>
                     </label>
-                </div>
-
+                </div> */}
+                <div><label className="flex items-center ms-2 pl-5 pt-5"><ApplicationLogo className="h-10 w-25 fill-current text-gray-800" /></label></div>
                 <div className="flex items-center justify-end mt-4">
                     {canResetPassword && (
                         <Link
@@ -88,7 +89,7 @@ export default function Login({ status, canResetPassword }) {
                     )}
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
+                        Acceder
                     </PrimaryButton>
                 </div>
             </form>

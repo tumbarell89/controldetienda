@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 
-export default function Edit({ auth, ntipogiro, ngiros }) {
+export default function Editar({ auth, ntipogiro, ngiros }) {
   const { data, setData, put, errors } = useForm({
     denominacion: ntipogiro.denominacion || '',
     ngiros_id: ntipogiro.ngiros_id || '', // Cambiar 'giro_id' a 'ngiros_id'

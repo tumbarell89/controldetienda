@@ -11,7 +11,7 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
+    if (window.confirm("Esta seguro que desea eliminar este elemento?")) {
       router.delete(route('dsalidaalmacens.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
@@ -64,7 +64,7 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
                      hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
                       focus-visible:outline-indigo-600"
                   >
-                    Add new
+                    Adicionar
                   </a>
                 </div>
               </div>
@@ -172,20 +172,20 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
                                   href={`/dsalidaalmacens/${dsalidaalmacen.id}`}
                                   className="text-gray-600 font-bold hover:text-gray-900 mr-2"
                                 >
-                                  Show
+                                  Mostrar
                                 </a>
                                 <a
                                   href={`/dsalidaalmacens/${dsalidaalmacen.id}/edit`}
                                   className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
                                 >
-                                  Edit
+                                  Editar
                                 </a>
                                 <button
                                   type="button"
                                   onClick={() => handleDelete(dsalidaalmacen.id)}
                                   className="text-red-600 font-bold hover:text-red-900"
                                 >
-                                  Delete
+                                  Eliminar
                                 </button>
                               </td>
                             </tr>
@@ -195,8 +195,8 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
                     </table>
                     <div className="mt-4 px-4">
                       <ReactPaginate
-                        previousLabel={'previous'}
-                        nextLabel={'next'}
+                        previousLabel={'anterior'}
+                        nextLabel={'siguiente'}
                         breakLabel={'...'}
                         breakClassName={'break-me'}
                         pageCount={dsalidaalmacens.last_page}

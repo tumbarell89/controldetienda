@@ -15,7 +15,7 @@
                             <p class="mt-2 text-sm text-gray-700">A list of all the {{ __('Dalmaceninternos') }}.</p>
                         </div>
                         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                            <a type="button" href="{{ route('dalmaceninternos.create') }}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add new</a>
+                            <a type="button" href="{{ route('dalmaceninternos.create') }}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Adicionar</a>
                         </div>
                     </div>
 
@@ -26,7 +26,7 @@
                                     <thead>
                                     <tr>
                                         <th scope="col" class="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">No</th>
-                                        
+
 									<th scope="col" class="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Cantidad</th>
 									<th scope="col" class="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Ialmacens Id</th>
 									<th scope="col" class="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Dproductos Id</th>
@@ -38,18 +38,18 @@
                                     @foreach ($dalmaceninternos as $dalmaceninterno)
                                         <tr class="even:bg-gray-50">
                                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-gray-900">{{ ++$i }}</td>
-                                            
+
 										<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $dalmaceninterno->cantidad }}</td>
 										<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $dalmaceninterno->ialmacens_id }}</td>
 										<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $dalmaceninterno->dproductos_id }}</td>
 
                                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                                                 <form action="{{ route('dalmaceninternos.destroy', $dalmaceninterno->id) }}" method="POST">
-                                                    <a href="{{ route('dalmaceninternos.show', $dalmaceninterno->id) }}" class="text-gray-600 font-bold hover:text-gray-900 mr-2">{{ __('Show') }}</a>
-                                                    <a href="{{ route('dalmaceninternos.edit', $dalmaceninterno->id) }}" class="text-indigo-600 font-bold hover:text-indigo-900  mr-2">{{ __('Edit') }}</a>
+                                                    <a href="{{ route('dalmaceninternos.show', $dalmaceninterno->id) }}" class="text-gray-600 font-bold hover:text-gray-900 mr-2">{{ __('Mostrar') }}</a>
+                                                    <a href="{{ route('dalmaceninternos.edit', $dalmaceninterno->id) }}" class="text-indigo-600 font-bold hover:text-indigo-900  mr-2">{{ __('Editar') }}</a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <a href="{{ route('dalmaceninternos.destroy', $dalmaceninterno->id) }}" class="text-red-600 font-bold hover:text-red-900" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;">{{ __('Delete') }}</a>
+                                                    <a href="{{ route('dalmaceninternos.destroy', $dalmaceninterno->id) }}" class="text-red-600 font-bold hover:text-red-900" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;">{{ __('Eliminar') }}</a>
                                                 </form>
                                             </td>
                                         </tr>

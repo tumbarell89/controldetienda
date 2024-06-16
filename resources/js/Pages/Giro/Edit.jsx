@@ -3,7 +3,7 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import ReactPaginate from 'react-paginate';
 
-export default function Edit({ auth, ngiro, children }) {
+export default function Editar({ auth, ngiro, children }) {
   const { data, setData, patch, errors } = useForm({
     denominacion: ngiro.denominacion || '',
   });
@@ -30,10 +30,10 @@ export default function Edit({ auth, ngiro, children }) {
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-gray-900">
-                    Update Ngiro
+                    Actualizar Giro
                   </h1>
                   <p className="mt-2 text-sm text-gray-700">
-                    Update existing Ngiro.
+                    Actualizar Giro existente.
                   </p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -41,7 +41,7 @@ export default function Edit({ auth, ngiro, children }) {
                     href={route('ngiros.index')}
                     className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Back
+                    Regresar
                   </Link>
                 </div>
               </div>
@@ -70,7 +70,7 @@ export default function Edit({ auth, ngiro, children }) {
                         type="submit"
                         className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
-                        Update
+                        Actualizar
                       </button>
                     </form>
                   </div>

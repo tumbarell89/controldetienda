@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 
-export default function Create({ auth, ngiro, children }) {
+export default function Adicionar({ auth, ngiro, children }) {
   const { data, setData, post, errors } = useForm({
     denominacion: ngiro.denominacion || '',
   });
@@ -29,10 +29,10 @@ export default function Create({ auth, ngiro, children }) {
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-gray-900">
-                    Create Ngiro
+                    Adicionar Giro
                   </h1>
                   <p className="mt-2 text-sm text-gray-700">
-                    Create a new Ngiro.
+                    Crear nuevo Giro.
                   </p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -40,7 +40,7 @@ export default function Create({ auth, ngiro, children }) {
                     href={route('ngiros.index')}
                     className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Back
+                    Regresar
                   </Link>
                 </div>
               </div>
@@ -64,7 +64,7 @@ export default function Create({ auth, ngiro, children }) {
                         type="submit"
                         className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
-                        Create
+                        Adicionar
                       </button>
                     </form>
                   </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ngiro;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\NgiroRequest;
@@ -17,10 +18,14 @@ class NgiroController extends Controller
      */
     public function index(Request $request)
     {
-        $ngiros = Ngiro::paginate();
+        $ngiros = Ngiro::paginate(5);
 
         return inertia('Giro/Index', [
             'ngiros' => $ngiros,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
             'i' => ($request->input('page', 1) - 1) * $ngiros->perPage()
         ]);
     }
@@ -44,7 +49,7 @@ class NgiroController extends Controller
         Ngiro::create($request->validated());
 
         return Redirect::route('ngiros.index')
-            ->with('success', 'Ngiro created successfully.');
+            ->with('success', 'Elemento creado satisfactoriamente');
     }
 
     /**
@@ -79,14 +84,21 @@ class NgiroController extends Controller
         $ngiro->update($request->validated());
 
         return Redirect::route('ngiros.index')
-            ->with('success', 'Giro updated successfully');
+            ->with('success', 'Elemento actualizado satisfactoriamente');
     }
 
     public function destroy($id): RedirectResponse
     {
-        Ngiro::findOrFail($id)->delete();
+        try{
+            Ngiro::findOrFail($id)->delete();
 
-        return Redirect::route('ngiros.index')
-            ->with('success', 'Giro deleted successfully');
+            session()->flash('success', 'El registro se ha eliminado correctamente.');
+
+            return Redirect::route('ngiros.index');
+        }catch(Exception $e){
+            session()->flash('error', ($e->getCode()==23503)? 'Elemento en uso': 'Existe algun problema para eliminar este elemento contacte al equipo de soporte');
+            return Redirect::route('ngiros.index');
+        }
+
     }
 }

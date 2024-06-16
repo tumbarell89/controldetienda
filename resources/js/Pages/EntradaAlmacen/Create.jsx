@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Productosmodal from "@/Components/Productosmodal";
 
-export default function Create({ auth, nalmacens, dclienteproveedors, dproductos }) {
+export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproductos }) {
   const { data, setData, post, errors } = useForm({
     factura: "",
     total: 0,

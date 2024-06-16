@@ -24,7 +24,7 @@ class DalmacenventaController extends Controller
                                 'dalmacenventas.created_at', 'dalmacenventas.updated_at',
                                 'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
                                 'ntipogiros.denominacion as tipogiro')
-                ->paginate();
+                ->paginate(10);
         //var_dump($dproductos);die;
         return inertia('AlmacenVentas/Index', compact('dproductos'))
             ->with('i', ($request->input('page', 1) - 1) * $dproductos->perPage());

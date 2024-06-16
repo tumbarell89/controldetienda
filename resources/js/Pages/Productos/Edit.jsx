@@ -1,7 +1,7 @@
 import { Head, Link, useForm } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 
-export default function Edit({ auth, dproducto, ntipogiros }) {
+export default function Editar({ auth, dproducto, ntipogiros }) {
   const { data, setData, put, errors } = useForm({
     denominacion: dproducto.denominacion || "",
     preciocosto: dproducto.preciocosto || "",

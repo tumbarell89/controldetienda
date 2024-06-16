@@ -1,11 +1,14 @@
 import Pagination from "@/Components/Pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import ReactPaginate from 'react-paginate';
+import React, { useEffect, useState } from "react";
 
 export default function Index({ auth, dproductos, children, queryParams = null, success }) {
+  const [currentPage, setCurrentPage] = useState(dproductos.current_page);
+
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
+    setCurrentPage(selectedPage);
     router.get(dproductos.path, { page: selectedPage });
   };
 
@@ -20,7 +23,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Productos en el Almacen de ventas
+          Productos en el Almacén de Ventas
         </h2>
       }
     >
@@ -32,11 +35,10 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-gray-900">
-                    Productos en el alamcen de ventas
+                    Productos en el Almacén de Ventas
                   </h1>
-                  <p className="mt-2 text-sm text-gray-700">Lista de Tipos Giros en el alamcen de ventas</p>
+                  <p className="mt-2 text-sm text-gray-700">Lista de Tipos Giros en el Almacén de Ventas</p>
                 </div>
-
               </div>
 
               <div className="flow-root">
@@ -47,8 +49,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                         <tr>
                           <th
                             scope="col"
-                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide
-                             text-gray-500"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
                             No
                           </th>
@@ -56,7 +57,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Denominacion
+                            Denominación
                           </th>
                           <th
                             scope="col"
@@ -74,13 +75,13 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Codigo CUP
+                            Código CUP
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Codigo de Producto
+                            Código de Producto
                           </th>
                           <th
                             scope="col"
@@ -98,13 +99,13 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Fecha de Creacion
+                            Fecha de Creación
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Fecha de actualizacion
+                            Fecha de Actualización
                           </th>
                           <th
                             scope="col"
@@ -151,7 +152,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                                   href={`/dalmacenventas/${dproducto.id}`}
                                   className="text-gray-600 font-bold hover:text-gray-900 mr-2"
                                 >
-                                  Show
+                                  Mostrar
                                 </a>
                               </td>
                             </tr>
@@ -159,21 +160,11 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                         }
                       </tbody>
                     </table>
-                    <div className="mt-4 px-4">
-                      <ReactPaginate
-                        previousLabel={'previous'}
-                        nextLabel={'next'}
-                        breakLabel={'...'}
-                        breakClassName={'break-me'}
-                        pageCount={dproductos.last_page}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={handlePageClick}
-                        containerClassName={'pagination'}
-                        subContainerClassName={'pages pagination'}
-                        activeClassName={'active'}
-                      />
-                    </div>
+                    <Pagination
+                      pageCount={dproductos.last_page}
+                      onPageChange={handlePageClick}
+                      currentPage={currentPage}
+                    />
                   </div>
                 </div>
               </div>

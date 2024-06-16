@@ -106,7 +106,7 @@ export default function EmbarazadasIndex({ auth, embarazadas }) {
                                         </table>
                                         <div className="mt-4 px-4">
                                             <ReactPaginate
-                                                previousLabel={"previous"}
+                                                previousLabel={"anterior"}
                                                 nextLabel={"next"}
                                                 breakLabel={"..."}
                                                 breakClassName={"break-me"}

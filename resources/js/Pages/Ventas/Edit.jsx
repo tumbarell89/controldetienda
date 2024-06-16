@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Productosmodal from "@/Components/Productosmodal";
 
-export default function Edit({ auth, dproductos, dventa }) {
+export default function Editar({ auth, dproductos, dventa }) {
   const { data, setData, put, errors } = useForm({
     total: dventa.total || 0,
     products: dventa.dventaproductos.map(product => ({

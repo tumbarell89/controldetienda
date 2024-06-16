@@ -1,167 +1,133 @@
-import Pagination from "@/Components/Pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import ReactPaginate from 'react-paginate';
+import React, { useEffect, useState } from "react";
+import Pagination from "@/Components/Pagination"; // Importar el nuevo componente
 
+export default function Index({ auth, ngiros, flash }) {
+  const [currentPage, setCurrentPage] = useState(ngiros.current_page);
 
-
-export default function Index({auth, ngiros, children, queryParams = null, success }){
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
-    router.get(ngiros.path, { page: selectedPage });
+    setCurrentPage(selectedPage);
+    router.get(route('ngiros.index'), { page: selectedPage });
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
+    if (window.confirm("¿Está seguro que desea eliminar este elemento?")) {
       router.delete(route('ngiros.destroy', id), {
         onSuccess: () => {
-          // Handle any additional actions after successful deletion
+          alert('Elemento eliminado correctamente');
+        },
+        onError: (errors) => {
+          alert('Hubo un error al eliminar el elemento');
         }
       });
     }
   };
+
+  useEffect(() => {
+    if (flash.success) {
+      alert(flash.success);
+    }
+    if (flash.error) {
+      alert(flash.error);
+    }
+  }, [flash]);
 
   return (
     <Authenticated
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Gestion de claisificador de Giros
+          Gestión de Clasificador de Giros
         </h2>
       }
     >
       <Head title="Centro Comercial Arroyo Arenas" />
-      <div class="py-12">
-        <div class="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
-          <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <div class="w-full">
-              <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                  <h1 class="text-base font-semibold leading-6 text-gray-900">
+      <div className="py-12">
+        <div className="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
+          <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <div className="w-full">
+              <div className="sm:flex sm:items-center">
+                <div className="sm:flex-auto">
+                  <h1 className="text-base font-semibold leading-6 text-gray-900">
                     Giros
                   </h1>
-                  <p class="mt-2 text-sm text-gray-700">Lista de Giros</p>
+                  <p className="mt-2 text-sm text-gray-700">Lista de Giros</p>
                 </div>
-                <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                  <a
-                    type="button"
-                    href={route('ngiros.create')} active={route().current('ngiros.create')}
-                    class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm
-                     hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
-                      focus-visible:outline-indigo-600"
+                <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                  <Link
+                    href={route('ngiros.create')}
+                    className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Add new
-                  </a>
+                    Adicionar
+                  </Link>
                 </div>
               </div>
 
-              <div class="flow-root">
-                <div class="mt-8 overflow-x-auto">
-                  <div class="inline-block min-w-full py-2 align-middle">
-                    <table class="w-full divide-y divide-gray-300">
+              <div className="flow-root">
+                <div className="mt-8 overflow-x-auto">
+                  <div className="inline-block min-w-full py-2 align-middle">
+                    <table className="w-full divide-y divide-gray-300">
                       <thead>
                         <tr>
                           <th
                             scope="col"
-                            class="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide
-                             text-gray-500"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
                             No
                           </th>
-
                           <th
                             scope="col"
-                            class="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Denominacion
+                            Denominación
                           </th>
-
                           <th
                             scope="col"
-                            class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                            className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           ></th>
                         </tr>
                       </thead>
-                      <tbody class="divide-y divide-gray-200 bg-white">
-                        {
-                        ngiros.data.map((ngiro, index) => (
-
+                      <tbody className="divide-y divide-gray-200 bg-white">
+                        {ngiros.data.map((ngiro, index) => (
                           <tr key={ngiro.id} className="even:bg-gray-50">
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-gray-900">
-                              {index + 1}
+                              {index + 1 + ngiros.from - 1}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                               {ngiro.denominacion}
                             </td>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
-                              {/* <form
-                                action={`/ngiros/${ngiro.id}`}
-                                method="POST"
-                                onSubmit={(e) => {
-                                  e.preventDefault();
-                                  if (
-                                    window.confirm("Are you sure to delete?")
-                                  ) {
-                                    fetch('/ngiros/${ngiro.id}', {
-                                      method: "destroy",
-                                      headers: {
-                                        "Content-Type": "application/json",
-                                        "X-CSRF-TOKEN": document
-                                          .querySelector(
-                                            'meta[name="csrf-token"]'
-                                          )
-                                          .getAttribute("content"),
-                                      },
-                                    }).then((response) => {
-                                      if (response.ok) {
-                                        // Handle the successful deletion (e.g., refresh the list)
-                                      }
-                                    });
-                                  }
-                                }}
-                              > */}
-                                <a
-                                  href={`/ngiros/${ngiro.id}`}
-                                  className="text-gray-600 font-bold hover:text-gray-900 mr-2"
-                                >
-                                  Show
-                                </a>
-                                <a
-                                  href={`/ngiros/${ngiro.id}/edit`}
-                                  className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
-                                >
-                                  Edit
-                                </a>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDelete(ngiro.id)}
-                                  className="text-red-600 font-bold hover:text-red-900"
-                                >
-
-                                  Delete
-                                </button>
-                              {/* </form> */}
+                              <Link
+                                href={`/ngiros/${ngiro.id}`}
+                                className="text-gray-600 font-bold hover:text-gray-900 mr-2"
+                              >
+                                Mostrar
+                              </Link>
+                              <Link
+                                href={`/ngiros/${ngiro.id}/edit`}
+                                className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
+                              >
+                                Editar
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(ngiro.id)}
+                                className="text-red-600 font-bold hover:text-red-900"
+                              >
+                                Eliminar
+                              </button>
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                        {/* <Pagination links={ngiros.meta.links} /> */}
-                    <div className="mt-4 px-4">
-                      <ReactPaginate
-                        previousLabel={'previous'}
-                        nextLabel={'next'}
-                        breakLabel={'...'}
-                        breakClassName={'break-me'}
-                        pageCount={ngiros.last_page}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={handlePageClick}
-                        containerClassName={'pagination'}
-                        subContainerClassName={'pages pagination'}
-                        activeClassName={'active'}
-                      />
-                    </div>
+                    <Pagination
+                      pageCount={ngiros.last_page}
+                      onPageChange={handlePageClick}
+                      currentPage={currentPage}
+                    />
                   </div>
                 </div>
               </div>
@@ -169,7 +135,6 @@ export default function Index({auth, ngiros, children, queryParams = null, succe
           </div>
         </div>
       </div>
-      {children}
     </Authenticated>
   );
 }

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Productosmodal from "@/Components/Productosmodal";
 
-export default function Create({ auth, dproductos }) {
+export default function Adicionar({ auth, dproductos }) {
   const { data, setData, post, errors } = useForm({
     //codigoconcecutivo: "",
     total: 0,

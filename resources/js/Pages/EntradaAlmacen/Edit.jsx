@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Productosmodal from "@/Components/Productosmodal";
 
-export default function Edit({
+export default function Editar({
   auth,
   dentradaalmacen,
   nalmacens,

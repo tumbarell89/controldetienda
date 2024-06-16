@@ -10,7 +10,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
+    if (window.confirm("Esta seguro que desea eliminar este elemento?")) {
       router.delete(route('dproductos.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
@@ -54,7 +54,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                      hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
                       focus-visible:outline-indigo-600"
                   >
-                    Add new
+                    Adicionar
                   </a>
                 </div>
               </div>
@@ -162,20 +162,20 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                                   href={`/dproductos/${dproducto.id}`}
                                   className="text-gray-600 font-bold hover:text-gray-900 mr-2"
                                 >
-                                  Show
+                                  Mostrar
                                 </a>
                                 <a
                                   href={`/dproductos/${dproducto.id}/edit`}
                                   className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
                                 >
-                                  Edit
+                                  Editar
                                 </a>
                                 <button
                                   type="button"
                                   onClick={() => handleDelete(dproducto.id)}
                                   className="text-red-600 font-bold hover:text-red-900"
                                 >
-                                  Delete
+                                  Eliminar
                                 </button>
                               </td>
                             </tr>
@@ -185,8 +185,8 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                     </table>
                     <div className="mt-4 px-4">
                       <ReactPaginate
-                        previousLabel={'previous'}
-                        nextLabel={'next'}
+                        previousLabel={'anterior'}
+                        nextLabel={'siguiente'}
                         breakLabel={'...'}
                         breakClassName={'break-me'}
                         pageCount={dproductos.last_page}

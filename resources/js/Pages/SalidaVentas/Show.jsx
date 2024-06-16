@@ -1,7 +1,7 @@
 import { Head, Link } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 
-export default function Show({ auth, dsalidaalmacen, nalmacenorigen, nalmacendestino, dclienteproveedors }) {
+export default function Mostrar({ auth, dsalidaalmacen, nalmacenorigen, nalmacendestino, dclienteproveedors }) {
 
   const renderIcon = (value) => {
     if (value === true) {

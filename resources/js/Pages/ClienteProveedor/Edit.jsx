@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 
-export default function Edit({ auth, dclienteproveedor }) {
+export default function Editar({ auth, dclienteproveedor }) {
   const { data, setData, put, errors } = useForm({
     denominacion: dclienteproveedor.denominacion || '',
     tipocliente: String(dclienteproveedor.tipocliente) || '',
@@ -21,26 +21,26 @@ export default function Edit({ auth, dclienteproveedor }) {
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Edit Dclienteproveedor
+          Editar Dclienteproveedor
         </h2>
       }
     >
-      <Head title="Edit Dclienteproveedor" />
+      <Head title="Editar Dclienteproveedor" />
       <div className="py-12">
         <div className="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
             <div className="w-full">
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                  <h1 className="text-base font-semibold leading-6 text-gray-900">Edit Dclienteproveedor</h1>
-                  <p className="mt-2 text-sm text-gray-700">Edit the details of the Dclienteproveedor.</p>
+                  <h1 className="text-base font-semibold leading-6 text-gray-900">Editar Dclienteproveedor</h1>
+                  <p className="mt-2 text-sm text-gray-700">Editar the details of the Dclienteproveedor.</p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                   <Link
                     href={route('dclienteproveedors.index')}
                     className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Back
+                    Regresar
                   </Link>
                 </div>
               </div>

@@ -4,7 +4,7 @@ export default function ApplicationLogo(props) {
     return (
         <img
             {...props}
-            src="/logo2.png"
+            src="/AA.png"
             alt="Application Logo"
         />
     );

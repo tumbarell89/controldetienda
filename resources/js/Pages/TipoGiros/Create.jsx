@@ -1,7 +1,7 @@
 import { Head, Link, useForm } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 
-export default function Create({ auth, ngiros }) {
+export default function Adicionar({ auth, ngiros }) {
   const { data, setData, post, errors } = useForm({
     denominacion: "",
     giro_id: "", // Cambiamos `id_giro` a `giro_id` para que sea más claro
@@ -29,10 +29,10 @@ export default function Create({ auth, ngiros }) {
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-gray-900">
-                    Create Tipo de giro
+                    Adicionar Tipo de giro
                   </h1>
                   <p className="mt-2 text-sm text-gray-700">
-                    Create a new Tipo de giro.
+                    Crear nuevo Tipo de giro.
                   </p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -40,7 +40,7 @@ export default function Create({ auth, ngiros }) {
                     href={route("ngiros.index")}
                     className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Back
+                    Regresar
                   </Link>
                 </div>
               </div>

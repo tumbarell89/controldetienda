@@ -1,7 +1,7 @@
 import { Head, Link } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 
-export default function Show({ auth, dventa }) {
+export default function Mostrar({ auth, dventa }) {
   const products = dventa.dventaproductos.map(product => ({
     ...product,
     cantidad: product.pivot.cantidad,

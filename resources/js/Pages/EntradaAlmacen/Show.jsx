@@ -1,7 +1,7 @@
 import { Head, Link } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 
-export default function Show({ auth, dentradaalmacen, nalmacens, dclienteproveedors, dproductos }) {
+export default function Mostrar({ auth, dentradaalmacen, nalmacens, dclienteproveedors, dproductos }) {
   return (
     <Authenticated
       user={auth.user}

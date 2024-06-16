@@ -39,7 +39,7 @@ export default function Index({auth, ngiros, children}){
                      hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
                       focus-visible:outline-indigo-600"
                   >
-                    Add new
+                    Adicionar
                   </a>
                 </div>
               </div>
@@ -113,19 +113,19 @@ export default function Index({auth, ngiros, children}){
                                   href={`/ngiros/${ngiro.id}`}
                                   className="text-gray-600 font-bold hover:text-gray-900 mr-2"
                                 >
-                                  Show
+                                  Mostrar
                                 </a>
                                 <a
                                   href={`/ngiros/${ngiro.id}/edit`}
                                   className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
                                 >
-                                  Edit
+                                  Editar
                                 </a>
                                 <button
                                   type="submit"
                                   className="text-red-600 font-bold hover:text-red-900"
                                 >
-                                  Delete
+                                  Eliminar
                                 </button>
                               </form>
                             </td>
@@ -136,7 +136,7 @@ export default function Index({auth, ngiros, children}){
                         <Pagination links={ngiros.meta.links} />
                     {/* <div className="mt-4 px-4">
                       <ReactPaginate
-                        previousLabel={'previous'}
+                        previousLabel={'anterior'}
                         nextLabel={'next'}
                         breakLabel={'...'}
                         breakClassName={'break-me'}

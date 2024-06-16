@@ -10,7 +10,7 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
+    if (window.confirm("Esta seguro que desea eliminar este elemento?")) {
       router.delete(route('dclienteproveedors.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
@@ -57,7 +57,7 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
                     active={route().current("dclienteproveedors.create")}
                     className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Add new
+                    Adicionar
                   </a>
                 </div>
               </div>
@@ -139,20 +139,20 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
                                 href={`/dclienteproveedors/${dclienteproveedor.id}`}
                                 className="text-gray-600 font-bold hover:text-gray-900 mr-2"
                               >
-                                Show
+                                Mostrar
                               </a>
                               <a
                                 href={`/dclienteproveedors/${dclienteproveedor.id}/edit`}
                                 className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
                               >
-                                Edit
+                                Editar
                               </a>
                               <button
                                 type="button"
                                 onClick={() => handleDelete(dclienteproveedor.id)}
                                 className="text-red-600 font-bold hover:text-red-900"
                               >
-                                Delete
+                                Eliminar
                               </button>
                             </td>
                           </tr>
@@ -162,8 +162,8 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
                     {/* <Pagination links={dclienteproveedors.meta.links} /> */}
                     <div className="mt-4 px-4">
                       <ReactPaginate
-                        previousLabel={"previous"}
-                        nextLabel={"next"}
+                        previousLabel={"Anterior"}
+                        nextLabel={"siguiente"}
                         breakLabel={"..."}
                         breakClassName={"break-me"}
                         pageCount={dclienteproveedors.last_page}

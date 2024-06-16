@@ -46,7 +46,7 @@ export default function DeleteUserForm({ className = '' }) {
     return (
         <section className={`space-y-6 ${className}`}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Delete Account</h2>
+                <h2 className="text-lg font-medium text-gray-900">Eliminar Account</h2>
 
                 <p className="mt-1 text-sm text-gray-600">
                     Once your account is deleted, all of its resources and data will be permanently deleted. Before
@@ -54,7 +54,7 @@ export default function DeleteUserForm({ className = '' }) {
                 </p>
             </header>
 
-            <DangerButton onClick={confirmUserDeletion}>Delete Account</DangerButton>
+            <DangerButton onClick={confirmUserDeletion}>Eliminar Account</DangerButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
@@ -89,7 +89,7 @@ export default function DeleteUserForm({ className = '' }) {
                         <SecondaryButton onClick={closeModal}>Cancel</SecondaryButton>
 
                         <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
+                            Eliminar Account
                         </DangerButton>
                     </div>
                 </form>

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Productosmodal from "@/Components/Productosmodal";
 
-export default function Edit({ auth, dsalidaalmacen, nalmacenorigen, nalmacendestino, dclienteproveedors, dproductos }) {
+export default function Editar({ auth, dsalidaalmacen, nalmacenorigen, nalmacendestino, dclienteproveedors, dproductos }) {
   const { data, setData, put, errors } = useForm({
     factura: dsalidaalmacen.factura || "",
     total: dsalidaalmacen.total || 0,

@@ -151,7 +151,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                                   href={`/dalmaceninternos/${dproducto.id}`}
                                   className="text-gray-600 font-bold hover:text-gray-900 mr-2"
                                 >
-                                  Show
+                                  Mostrar
                                 </a>
                               </td>
                             </tr>
@@ -159,9 +159,9 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                         }
                       </tbody>
                     </table>
-                    <div className="mt-4 px-4">
+                    {/* <div className="mt-4 px-4">
                       <ReactPaginate
-                        previousLabel={'previous'}
+                        previousLabel={'anterior'}
                         nextLabel={'next'}
                         breakLabel={'...'}
                         breakClassName={'break-me'}
@@ -173,7 +173,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                         subContainerClassName={'pages pagination'}
                         activeClassName={'active'}
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
