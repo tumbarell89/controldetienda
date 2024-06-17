@@ -20,7 +20,7 @@ class DclienteproveedorController extends Controller
      */
     public function index(Request $request)
     {
-             $dclienteproveedors = Dclienteproveedor::paginate();
+             $dclienteproveedors = Dclienteproveedor::paginate(10);
 
             return inertia('ClienteProveedor/Index', [
                 'dclienteproveedors' => $dclienteproveedors,

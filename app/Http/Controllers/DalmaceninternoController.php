@@ -24,7 +24,7 @@ class DalmaceninternoController extends Controller
                         'dalmaceninternos.created_at', 'dalmaceninternos.updated_at',
                         'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
                         'ntipogiros.denominacion as tipogiro')
-        ->paginate();
+        ->paginate(10);
 
         return inertia('AlmacenInterno/Index', compact('dproductos'))
             ->with('i', ($request->input('page', 1) - 1) * $dproductos->perPage());

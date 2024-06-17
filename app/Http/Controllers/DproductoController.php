@@ -17,7 +17,7 @@ class DproductoController extends Controller
      */
     public function index(Request $request)
     {
-        $dproductos = Dproducto::with('ntipogiro')->paginate();
+        $dproductos = Dproducto::with('ntipogiro')->paginate(10);
 
         return inertia('Productos/Index', [
             'dproductos' => $dproductos,

@@ -1,16 +1,19 @@
 import Pagination from "@/Components/Pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import ReactPaginate from 'react-paginate';
+import { useState } from "react";
 
 export default function Index({ auth, dproductos, children, queryParams = null, success }) {
+  const [currentPage, setCurrentPage] = useState(dproductos.current_page);
+
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
+    setCurrentPage(selectedPage);
     router.get(dproductos.path, { page: selectedPage });
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Esta seguro que desea eliminar este elemento?")) {
+    if (window.confirm("¿Está seguro que desea eliminar este elemento?")) {
       router.delete(route('dproductos.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
@@ -30,7 +33,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Gestion de Productos
+          Gestión de Productos
         </h2>
       }
     >
@@ -76,7 +79,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Denominacion
+                            Denominación
                           </th>
                           <th
                             scope="col"
@@ -88,13 +91,13 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Codigo CUP
+                            Código CUP
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Codigo de Producto
+                            Código de Producto
                           </th>
                           <th
                             scope="col"
@@ -112,13 +115,13 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Fecha de Creacion
+                            Fecha de Creación
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Fecha de actualizacion
+                            Fecha de Actualización
                           </th>
                           <th
                             scope="col"
@@ -183,21 +186,11 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                         }
                       </tbody>
                     </table>
-                    <div className="mt-4 px-4">
-                      <ReactPaginate
-                        previousLabel={'anterior'}
-                        nextLabel={'siguiente'}
-                        breakLabel={'...'}
-                        breakClassName={'break-me'}
-                        pageCount={dproductos.last_page}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={handlePageClick}
-                        containerClassName={'pagination'}
-                        subContainerClassName={'pages pagination'}
-                        activeClassName={'active'}
-                      />
-                    </div>
+                    <Pagination
+                      pageCount={dproductos.last_page}
+                      onPageChange={handlePageClick}
+                      currentPage={currentPage}
+                    />
                   </div>
                 </div>
               </div>

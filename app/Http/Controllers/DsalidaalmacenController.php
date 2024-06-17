@@ -21,7 +21,7 @@ class DsalidaalmacenController extends Controller
      */
     public function index(Request $request)
     {
-        $dsalidaalmacens = Dsalidaalmacen::with(['nalmacenorigen', 'nalmacendestino'])->with('dclienteproveedor')->paginate();
+        $dsalidaalmacens = Dsalidaalmacen::with(['nalmacenorigen', 'nalmacendestino'])->with('dclienteproveedor')->paginate(10);
 
         return inertia('SalidaVentas/Index', [
             'dsalidaalmacens' => $dsalidaalmacens,

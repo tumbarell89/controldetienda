@@ -1,11 +1,14 @@
 import Pagination from "@/Components/Pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import ReactPaginate from 'react-paginate';
+import { useState } from "react";
 
 export default function Index({ auth, ntipogiros, children, queryParams = null, success }) {
+  const [currentPage, setCurrentPage] = useState(ntipogiros.current_page);
+
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
+    setCurrentPage(selectedPage);
     router.get(ntipogiros.path, { page: selectedPage });
   };
 
@@ -123,21 +126,11 @@ export default function Index({ auth, ntipogiros, children, queryParams = null, 
                         }
                       </tbody>
                     </table>
-                    <div className="mt-4 px-4">
-                      <ReactPaginate
-                        previousLabel={'anterior'}
-                        nextLabel={'siguiente'}
-                        breakLabel={'...'}
-                        breakClassName={'break-me'}
-                        pageCount={ntipogiros.last_page}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={handlePageClick}
-                        containerClassName={'pagination'}
-                        subContainerClassName={'pages pagination'}
-                        activeClassName={'active'}
-                      />
-                    </div>
+                    <Pagination
+                      pageCount={ntipogiros.last_page}
+                      onPageChange={handlePageClick}
+                      currentPage={currentPage}
+                    />
                   </div>
                 </div>
               </div>

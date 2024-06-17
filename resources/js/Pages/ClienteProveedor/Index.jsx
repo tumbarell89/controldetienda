@@ -1,16 +1,19 @@
 import Pagination from "@/Components/Pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import ReactPaginate from 'react-paginate';
+import { useState } from "react";
 
 export default function Index({ auth, dclienteproveedors, children, queryParams = null, success }) {
+  const [currentPage, setCurrentPage] = useState(dclienteproveedors.current_page);
+
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
+    setCurrentPage(selectedPage);
     router.get(dclienteproveedors.path, { page: selectedPage });
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Esta seguro que desea eliminar este elemento?")) {
+    if (window.confirm("¿Está seguro que desea eliminar este elemento?")) {
       router.delete(route('dclienteproveedors.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
@@ -34,7 +37,7 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Gestion de Clientes y Proveedores
+          Gestión de Clientes y Proveedores
         </h2>
       }
     >
@@ -79,25 +82,25 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Denominacion
+                            Denominación
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Tipocliente
+                            Tipo cliente
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Esembarazada
+                            Es embarazada
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Carnetidentidad
+                            Carnet de identidad
                           </th>
                           <th
                             scope="col"
@@ -125,7 +128,7 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
                               {dclienteproveedor.tipocliente === 2 ? 'Cliente' : 'Proveedor'}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {dclienteproveedor.tipocliente === 2 ? renderIcon(dclienteproveedor.esembarazada): ''}
+                              {dclienteproveedor.tipocliente === 2 ? renderIcon(dclienteproveedor.esembarazada) : ''}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                               {dclienteproveedor.tipocliente === 2 ? dclienteproveedor.carnetidentidad : ''}
@@ -159,22 +162,11 @@ export default function Index({ auth, dclienteproveedors, children, queryParams 
                         ))}
                       </tbody>
                     </table>
-                    {/* <Pagination links={dclienteproveedors.meta.links} /> */}
-                    <div className="mt-4 px-4">
-                      <ReactPaginate
-                        previousLabel={"Anterior"}
-                        nextLabel={"siguiente"}
-                        breakLabel={"..."}
-                        breakClassName={"break-me"}
-                        pageCount={dclienteproveedors.last_page}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={handlePageClick}
-                        containerClassName={"pagination"}
-                        subContainerClassName={"pages pagination"}
-                        activeClassName={"active"}
-                      />
-                    </div>
+                    <Pagination
+                      pageCount={dclienteproveedors.last_page}
+                      onPageChange={handlePageClick}
+                      currentPage={currentPage}
+                    />
                   </div>
                 </div>
               </div>

@@ -17,7 +17,7 @@ class NtipogiroController extends Controller
      */
     public function index(Request $request)
 {
-    $ntipogiros = Ntipogiro::with('ngiro')->paginate();
+    $ntipogiros = Ntipogiro::with('ngiro')->paginate(10);
 
     return inertia('TipoGiros/Index', [
         'ntipogiros' => $ntipogiros,

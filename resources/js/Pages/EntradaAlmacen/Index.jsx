@@ -1,16 +1,19 @@
 import Pagination from "@/Components/Pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import ReactPaginate from 'react-paginate';
+import { useState } from "react";
 
 export default function Index({ auth, dentradaalmacens, children, queryParams = null, success }) {
+  const [currentPage, setCurrentPage] = useState(dentradaalmacens.current_page);
+
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
+    setCurrentPage(selectedPage);
     router.get(dentradaalmacens.path, { page: selectedPage });
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Esta seguro que desea eliminar este elemento?")) {
+    if (window.confirm("¿Está seguro que desea eliminar este elemento?")) {
       router.delete(route('dentradaalmacens.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
@@ -30,7 +33,7 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Gestion de Productos
+          Gestión de Productos
         </h2>
       }
     >
@@ -42,7 +45,7 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-gray-900">
-                    Gestion de Entradas de productos al Almacen
+                    Gestión de Entradas de productos al Almacén
                   </h1>
                   <p className="mt-2 text-sm text-gray-700">Lista de Facturas entradas</p>
                 </div>
@@ -94,19 +97,19 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Almacen
+                            Almacén
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Fecha de Creacion
+                            Fecha de Creación
                           </th>
                           <th
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
-                            Fecha de actualizacion
+                            Fecha de Actualización
                           </th>
                           <th
                             scope="col"
@@ -165,21 +168,11 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                         }
                       </tbody>
                     </table>
-                    <div className="mt-4 px-4">
-                      <ReactPaginate
-                        previousLabel={'anterior'}
-                        nextLabel={'next'}
-                        breakLabel={'...'}
-                        breakClassName={'break-me'}
-                        pageCount={dentradaalmacens.last_page}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={handlePageClick}
-                        containerClassName={'pagination'}
-                        subContainerClassName={'pages pagination'}
-                        activeClassName={'active'}
-                      />
-                    </div>
+                    <Pagination
+                      pageCount={dentradaalmacens.last_page}
+                      onPageChange={handlePageClick}
+                      currentPage={currentPage}
+                    />
                   </div>
                 </div>
               </div>

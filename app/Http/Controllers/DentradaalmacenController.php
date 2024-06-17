@@ -20,7 +20,7 @@ class DentradaalmacenController extends Controller
     public function index(Request $request)
     {
 
-            $dentradaalmacens = Dentradaalmacen::with('nalmacen')->with('dclienteproveedor')->paginate();
+            $dentradaalmacens = Dentradaalmacen::with('nalmacen')->with('dclienteproveedor')->paginate(10);
 
             return inertia('EntradaAlmacen/Index', [
                 'dentradaalmacens' => $dentradaalmacens,

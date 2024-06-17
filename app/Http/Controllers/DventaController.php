@@ -19,7 +19,7 @@ class DventaController extends Controller
      */
     public function index(Request $request)
     {
-        $dventas = Dventa::paginate();
+        $dventas = Dventa::paginate(10);
 
             return inertia('Ventas/Index', [
                 'dventas' => $dventas,
