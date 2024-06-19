@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function Index({ auth, dproductos, children, queryParams = null, success }) {
   const [currentPage, setCurrentPage] = useState(dproductos.current_page);
-
+  console.log(dproductos);
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
     setCurrentPage(selectedPage);
@@ -47,7 +47,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                   <h1 className="text-base font-semibold leading-6 text-gray-900">
                     Productos
                   </h1>
-                  <p className="mt-2 text-sm text-gray-700">Lista de Tipos Giros</p>
+                  <p className="mt-2 text-sm text-gray-700">Listado de Productos posibles</p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                   <a
@@ -86,6 +86,12 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
                             Precio de Costo
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                          >
+                            Precio de Venta
                           </th>
                           <th
                             scope="col"
@@ -143,13 +149,16 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                                 {dproducto.preciocosto}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                {dproducto.precioventa}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {dproducto.codigocup}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {dproducto.codigoproducto}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {dproducto.unidadmedida}
+                              {dproducto.nunidadmedida ? dproducto.nunidadmedida.denominacion : 'N/A'}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {dproducto.ntipogiro ? dproducto.ntipogiro.denominacion : 'N/A'}

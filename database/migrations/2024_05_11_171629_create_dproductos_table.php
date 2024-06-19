@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('denominacion');
             $table->double('preciocosto');
+            $table->double('precioventa');
             $table->string('codigocup');
             $table->string('codigoproducto');
-            $table->string('unidadmedida');
+            $table->foreignId('nunidadmedida_id')->constrained('nunidadmedida');
             $table->foreignId('dtipogiros_id')->constrained('ntipogiros');
             $table->timestamps();
         });

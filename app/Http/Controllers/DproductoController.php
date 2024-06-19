@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dproducto;
 use App\Models\Ntipogiro;
+use App\Models\Nunidadmedida;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\DproductoRequest;
@@ -17,7 +18,8 @@ class DproductoController extends Controller
      */
     public function index(Request $request)
     {
-        $dproductos = Dproducto::with('ntipogiro')->paginate(10);
+        $dproductos = Dproducto::with(['ntipogiro', 'nunidadmedida'])
+                                    ->paginate(10);
 
         return inertia('Productos/Index', [
             'dproductos' => $dproductos,
@@ -31,8 +33,10 @@ class DproductoController extends Controller
     public function create()
     {
         $ntipogiros = Ntipogiro::all(); // Asumiendo que el modelo es Ngiro
+        $nunidadmedidas = Nunidadmedida::all();
         return inertia('Productos/Create', [
-            'ntipogiros' => $ntipogiros
+            'ntipogiros' => $ntipogiros,
+            'nunidadmedidas' => $nunidadmedidas
         ]);
     }
 
@@ -45,9 +49,10 @@ class DproductoController extends Controller
         $validatedData = $request->validate([
             'denominacion' => 'required|string|max:255',
             'preciocosto'=>'required|numeric|min:1',
+            'precioventa'=>'required|numeric|min:1',
             'codigocup'=>'required|string|max:100',
             'codigoproducto'=>'required|string|max:100',
-            'unidadmedida'=>'required|string|max:10',
+            'nunidadmedida_id'=>'required|exists:nunidadmedidas,id',
             'tipogiro_id' => 'required|exists:ntipogiros,id', // Asegura que el giro_id existe en la tabla ngiros
         ]);
 
@@ -57,7 +62,8 @@ class DproductoController extends Controller
         $dproductos->preciocosto = $validatedData['preciocosto'];
         $dproductos->codigocup = $validatedData['codigocup'];
         $dproductos->codigoproducto = $validatedData['codigoproducto'];
-        $dproductos->unidadmedida = $validatedData['unidadmedida'];
+        $dproductos->precioventa = $validatedData['precioventa'];
+        $dproductos->nunidadmedida_id = $validatedData['nunidadmedida_id'];
         $dproductos->dtipogiros_id = $validatedData['tipogiro_id']; // Asigna el giro_id del formulario
         $dproductos->save();
 
@@ -84,6 +90,7 @@ class DproductoController extends Controller
     {
         $dproducto = Dproducto::findOrFail($id);
         $ntipogiros = Ntipogiro::all();
+        $nunidadmedidas = Nunidadmedida::all();
 
         //return view('dproducto.edit', compact('dproducto'));
 
@@ -93,6 +100,7 @@ class DproductoController extends Controller
     return inertia('Productos/Edit', [
         'dproducto' => $dproducto,
         'ntipogiros' => $ntipogiros, // Pasar los giros a la vista
+        'nunidadmedidas' => $nunidadmedidas, // Pasar los giros a la vista
     ]);
     }
 
@@ -112,11 +120,12 @@ class DproductoController extends Controller
                 'preciocosto'=>'required|numeric|min:1',
                 'codigocup'=>'required|string|max:100',
                 'codigoproducto'=>'required|string|max:100',
-                'unidadmedida'=>'required|string|max:10',
+                // 'unidadmedida'=>'required|string|max:10',
                 'dtipogiros_id' => 'required|exists:ntipogiros,id', // Asegura que el giro_id existe en la tabla ngiros
+                'nunidadmedida_id' => 'required|exists:nunidadmedidas,id', // Asegura que el giro_id existe en la tabla ngiros
             ]);
 
-            $dproducto->update($request->only('denominacion', 'preciocosto', 'codigocup', 'codigoproducto', 'unidadmedida', 'dtipogiros_id'));
+            $dproducto->update($request->only('denominacion', 'preciocosto', 'codigocup', 'codigoproducto', 'nunidadmedida_id', 'dtipogiros_id'));
 
             return Redirect::route('dproductos.index')
                 ->with('success', 'Producto updated successfully');

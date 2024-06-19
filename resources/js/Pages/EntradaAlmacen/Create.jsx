@@ -14,6 +14,7 @@ export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproduc
 
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     // Calcular el total cada vez que cambian los productos seleccionados
@@ -63,6 +64,14 @@ export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproduc
     );
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredProducts = dproductos.filter((dproducto) =>
+    dproducto.denominacion.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <Authenticated
       user={auth.user}
@@ -82,77 +91,65 @@ export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproduc
                 <h3 className="text-lg font-medium leading-6 text-gray-900">
                   Productos seleccionados
                 </h3>
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Nombre
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Cantidad
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Precio
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Acción
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {selectedProducts.map((product) => (
-                      <tr key={product.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {product.denominacion}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <input
-                            type="number"
-                            min="1"
-                            value={product.cantidad}
-                            onChange={(e) =>
-                              updateProductQuantity(product.id, e.target.value)
-                            }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          />
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={product.precio}
-                            onChange={(e) =>
-                              updateProductPrice(product.id, e.target.value)
-                            }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          />
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={() => removeProduct(product.id)}
-                            className="inline-flex items-center px-3 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-300 disabled:opacity-25 transition"
-                          >
-                            Quitar
-                          </button>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Nombre
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Cantidad
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Precio
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Precio de Venta
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Acción
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {selectedProducts.map((product) => (
+                        <tr key={product.id}>
+                          <td className="px-4 py-4 whitespace-nowrap">{product.denominacion}</td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <input
+                              type="number"
+                              min="1"
+                              value={product.cantidad}
+                              onChange={(e) => updateProductQuantity(product.id, e.target.value)}
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={product.precio}
+                              onChange={(e) => updateProductPrice(product.id, e.target.value)}
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">{product.precioventa}</td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <button
+                              type="button"
+                              onClick={() => removeProduct(product.id)}
+                              className="inline-flex items-center px-3 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-300 disabled:opacity-25 transition"
+                            >
+                              Quitar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
               {/* Formulario */}
               <div className="w-full md:w-2/4">
@@ -213,13 +210,11 @@ export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproduc
                         </div>
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700">
-                            Almacenes de entrada disponibles
+                            Almacén
                           </label>
                           <select
                             value={data.nalmacens_id}
-                            onChange={(e) =>
-                              setData("nalmacens_id", e.target.value)
-                            }
+                            onChange={(e) => setData("nalmacens_id", e.target.value)}
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           >
                             <option value="">Selecciona un almacén</option>
@@ -237,22 +232,17 @@ export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproduc
                         </div>
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700">
-                            Proveedor de productos
+                            Proveedor de Origen
                           </label>
                           <select
                             value={data.dproveedor_origen_id}
-                            onChange={(e) =>
-                              setData("dproveedor_origen_id", e.target.value)
-                            }
+                            onChange={(e) => setData("dproveedor_origen_id", e.target.value)}
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           >
                             <option value="">Selecciona un proveedor</option>
                             {dclienteproveedors.map((dclienteproveedor) => (
-                              <option
-                                key={dclienteproveedor.id}
-                                value={dclienteproveedor.id}
-                              >
-                                {dclienteproveedor.denominacion}
+                              <option key={dclienteproveedor.id} value={dclienteproveedor.id}>
+                                {dclienteproveedor.nombre}
                               </option>
                             ))}
                           </select>
@@ -262,22 +252,21 @@ export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproduc
                             </p>
                           )}
                         </div>
-                        {/* Botón para abrir el modal */}
                         <div className="mb-4">
                           <button
                             type="button"
                             onClick={() => setIsModalOpen(true)}
                             className="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 active:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-300 disabled:opacity-25 transition"
                           >
-                            Añadir Productos Disponibles
+                            Añadir Producto
                           </button>
                         </div>
-                        <div className="flex items-center justify-end mt-4">
+                        <div>
                           <button
                             type="submit"
-                            className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition"
+                            className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 active:bg-green-700 focus:outline-none focus:border-green-700 focus:ring focus:ring-green-300 disabled:opacity-25 transition"
                           >
-                            Crear
+                            Crear Entrada de Almacen
                           </button>
                         </div>
                       </form>
@@ -289,62 +278,49 @@ export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproduc
           </div>
         </div>
       </div>
-
-      {/* Productosmodal */}
+      {/* Modal de Productos */}
       <Productosmodal isOpen={isModalOpen} setIsOpen={setIsModalOpen}>
-        <h3 className="text-lg font-medium leading-6 text-gray-900">
-          Productos disponibles
-        </h3>
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Nombre
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Precio
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Acción
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {dproductos.map((dproducto) => (
-              <tr key={dproducto.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {dproducto.denominacion}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {dproducto.preciocosto}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      addProduct(dproducto);
-                    }}
-                    className="inline-flex items-center px-3 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 active:bg-green-700 focus:outline-none focus:border-green-700 focus:ring focus:ring-green-300 disabled:opacity-25 transition"
-                    disabled={selectedProducts.some(
-                      (p) => p.id === dproducto.id
-                    )}
-                  >
-                    Añadir
-                  </button>
-                </td>
+        <h3 className="text-lg font-medium leading-6 text-gray-900">Productos disponibles</h3>
+        <div className="my-2">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Buscar productos..."
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div className="overflow-x-auto" style={{ maxHeight: "400px", overflowY: "auto" }}>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio de Venta</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredProducts.map((dproducto) => (
+                <tr key={dproducto.id}>
+                  <td className="px-4 py-4 whitespace-nowrap">{dproducto.denominacion}</td>
+                  <td className="px-4 py-4 whitespace-nowrap">{dproducto.preciocosto}</td>
+                  <td className="px-4 py-4 whitespace-nowrap">{dproducto.precioventa}</td>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <button
+                      type="button"
+                      onClick={() => addProduct(dproducto)}
+                      className="inline-flex items-center px-3 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 active:bg-green-700 focus:outline-none focus:border-green-700 focus:ring focus:ring-green-300 disabled:opacity-25 transition"
+                      disabled={selectedProducts.some((p) => p.id === dproducto.id)}
+                    >
+                      Añadir
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Productosmodal>
     </Authenticated>
   );

@@ -24,9 +24,10 @@ class DproductoRequest extends FormRequest
         return [
 			'denominacion' => 'required|string',
 			'preciocosto' => 'required',
+			'precioventa' => 'required',
 			'codigocup' => 'required|string',
 			'codigoproducto' => 'required|string',
-			'unidadmedida' => 'required|string',
+			'nunidadmedida_id' => 'required',
 			'dtipogiros_id' => 'required',
         ];
     }

@@ -1,13 +1,14 @@
 import { Head, Link, useForm } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 
-export default function Editar({ auth, dproducto, ntipogiros }) {
+export default function Editar({ auth, dproducto, ntipogiros, nunidadmedidas }) {
   const { data, setData, put, errors } = useForm({
     denominacion: dproducto.denominacion || "",
     preciocosto: dproducto.preciocosto || "",
+    precioventa: dproducto.precioventa || "",
     codigocup: dproducto.codigocup || "",
     codigoproducto: dproducto.codigoproducto || "",
-    unidadmedida: dproducto.unidadmedida || "",
+    nunidadmedida_id: dproducto.nunidadmedida_id || "",
     dtipogiros_id: dproducto.dtipogiros_id || "",
   });
 
@@ -91,6 +92,24 @@ export default function Editar({ auth, dproducto, ntipogiros }) {
                       </div>
                       <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">
+                          Precio de Venta
+                        </label>
+                        <input
+                          type="number"
+                          value={data.precioventa}
+                          onChange={(e) =>
+                            setData("precioventa", e.target.value)
+                          }
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        />
+                        {errors.precioventa && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.precioventa}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">
                           Codigo CUP
                         </label>
                         <input
@@ -123,7 +142,7 @@ export default function Editar({ auth, dproducto, ntipogiros }) {
                           </p>
                         )}
                       </div>
-                      <div className="mb-4">
+                      {/* <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">
                           Unidad de Medida
                         </label>
@@ -140,8 +159,34 @@ export default function Editar({ auth, dproducto, ntipogiros }) {
                             {errors.unidadmedida}
                           </p>
                         )}
-                      </div>
+                      </div> */}
 
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Unidad de Medida
+                        </label>
+                        <select
+                          id="nunidadmedida_id"
+                          name="nunidadmedida_id"
+                          value={data.nunidadmedida_id}
+                          onChange={(e) =>
+                            setData("nunidadmedida_id", e.target.value)
+                          }
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        >
+                          <option value="">Selecciona un tipo de giro</option>
+                          {nunidadmedidas.map((nunidadmedida) => (
+                            <option key={nunidadmedida.id} value={nunidadmedida.id}>
+                              {nunidadmedida.denominacion}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.tipogiro_id && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.tipogiro_id}
+                          </p>
+                        )}
+                      </div>
                       <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">
                           Tipo de Giro

@@ -10,14 +10,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property $id
  * @property $denominacion
  * @property $preciocosto
+ * @property $precioventa
  * @property $codigocup
  * @property $codigoproducto
  * @property $unidadmedida
+ * @property $nunidadmedida_id
  * @property $dtipogiros_id
  * @property $created_at
  * @property $updated_at
  *
  * @property Ntipogiro $ntipogiro
+ * @property Nunidadmedida $nunidadmedida
  * @property Dalmaceninterno[] $dalmaceninternos
  * @property Dalmacenventa[] $dalmacenventas
  * @property Dproductoentrada[] $dproductoentradas
@@ -36,7 +39,7 @@ class Dproducto extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['denominacion', 'preciocosto', 'codigocup', 'codigoproducto', 'unidadmedida', 'dtipogiros_id'];
+    protected $fillable = ['denominacion', 'preciocosto', 'codigocup', 'codigoproducto', 'precioventa', 'dtipogiros_id', 'nunidadmedida_id'];
 
 
     /**
@@ -45,6 +48,14 @@ class Dproducto extends Model
     public function ntipogiro()
     {
         return $this->belongsTo(\App\Models\Ntipogiro::class, 'dtipogiros_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function nunidadmedida()
+    {
+        return $this->belongsTo(\App\Models\Nunidadmedida::class, 'nunidadmedida_id', 'id');
     }
 
     /**

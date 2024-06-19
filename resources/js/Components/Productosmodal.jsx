@@ -17,7 +17,7 @@ export default function Productosmodal({ isOpen, setIsOpen, children }) {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
             <Transition.Child
               as={Fragment}
