@@ -101,7 +101,13 @@ export default function Adicionar({ auth, dproductos }) {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
-                        Precio
+                        Precio Costo
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Precio Venta
                       </th>
                       <th
                         scope="col"
@@ -140,6 +146,9 @@ export default function Adicionar({ auth, dproductos }) {
                             }
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {product.preciocosto}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <button
@@ -248,7 +257,13 @@ export default function Adicionar({ auth, dproductos }) {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Precio
+                Precio Costo
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Precio Venta
               </th>
               <th
                 scope="col"
@@ -269,6 +284,9 @@ export default function Adicionar({ auth, dproductos }) {
               <tr key={dproducto.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {dproducto.denominacion}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {dproducto.preciocosto}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {dproducto.preciocosto}
