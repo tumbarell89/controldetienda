@@ -20,9 +20,11 @@ class DalmaceninternoController extends Controller
     {
         $dproductos = Dalmaceninterno::join('dproductos', 'dproductos.id', '=', 'dalmaceninternos.dproductos_id')
         ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
-        ->select('dproductos.denominacion', 'dalmaceninternos.dproductos_id as id', 'dalmaceninternos.precio as preciocosto', 'dalmaceninternos.cantidad',
+        ->join('nunidadmedidas','nunidadmedidas.id','=','dproductos.nunidadmedida_id')
+        ->select('dproductos.denominacion', 'dalmaceninternos.dproductos_id as id', 'dalmaceninternos.precio as preciocosto',
+                        'dalmaceninternos.precioventa','dalmaceninternos.cantidad',
                         'dalmaceninternos.created_at', 'dalmaceninternos.updated_at',
-                        'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                        'dproductos.codigocup', 'nunidadmedidas.denominacion as unidadmedida', 'dproductos.codigoproducto',
                         'ntipogiros.denominacion as tipogiro')
         ->paginate(10);
 

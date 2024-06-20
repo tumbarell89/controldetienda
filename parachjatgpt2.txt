@@ -95,7 +95,14 @@ CREATE TABLE IF NOT EXISTS public.dalmacenventas
         ON DELETE NO ACTION
 )
 -- Crear la función para manejar la inserción en dproductosalidas
-CREATE OR REPLACE FUNCTION handle_dproductosalidas_insert() RETURNS trigger AS $$
+-- DROP FUNCTION IF EXISTS public.handle_dproductosalidas_insert_or_update();
+
+CREATE OR REPLACE FUNCTION public.handle_dproductosalidas_insert_or_update()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
 DECLARE
     v_salida dsalidaalmacens%ROWTYPE;
 BEGIN
@@ -110,6 +117,21 @@ BEGIN
           AND precio = NEW.precio
           AND cantidad >= NEW.cantidad
     ) THEN
+        -- Si es una actualización, revertir los cambios de la versión anterior
+        IF TG_OP = 'UPDATE' THEN
+            UPDATE dalmaceninternos
+            SET cantidad = cantidad + OLD.cantidad
+            WHERE dproductos_id = OLD.dproducto_id
+              AND precio = OLD.precio;
+
+            IF v_salida.esventa THEN
+                UPDATE dalmacenventas
+                SET cantidad = cantidad - OLD.cantidad
+                WHERE dproductos_id = OLD.dproducto_id
+                  AND precio = OLD.precio;
+            END IF;
+        END IF;
+
         -- Actualizar la cantidad en dalmaceninternos
         UPDATE dalmaceninternos
         SET cantidad = cantidad - NEW.cantidad
@@ -139,13 +161,22 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$BODY$;
 
--- Crear el trigger para llamar a la función al insertar en dproductosalidas
-CREATE TRIGGER after_dproductosalidas_insert
-AFTER INSERT ON dproductosalidas
-FOR EACH ROW
-EXECUTE FUNCTION handle_dproductosalidas_insert();
+ALTER FUNCTION public.handle_dproductosalidas_insert_or_update()
+    OWNER TO postgres;
+
+-- DROP TRIGGER IF EXISTS after_dproductosalidas_insert_or_update ON public.dproductosalidas;
+
+CREATE OR REPLACE TRIGGER after_dproductosalidas_insert_or_update
+    AFTER INSERT OR UPDATE
+    ON public.dproductosalidas
+    FOR EACH ROW
+    EXECUTE FUNCTION public.handle_dproductosalidas_insert_or_update();
+
+ALTER TABLE public.dproductosalidas
+    DISABLE TRIGGER after_dproductosalidas_insert_or_update;
+
 
 
 -- Crear la función para manejar la eliminación en dproductosalidas

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $id
  * @property $codigo
  * @property $total
+ * @property $estado
  * @property $created_at
  * @property $updated_at
  *
@@ -27,7 +28,7 @@ class Dventa extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['codigoconcecutivo', 'total'];
+    protected $fillable = ['codigoconcecutivo', 'total', 'estado'];
 
 
     // /**

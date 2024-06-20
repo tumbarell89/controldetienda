@@ -23,6 +23,26 @@ export default function Index({ auth, dventas, children, queryParams = null, suc
     }
   };
 
+  const handleComplete = (id) => {
+    if (window.confirm("¿Está seguro que desea cerrar la factura?")) {
+      router.put(route('dventas.complete', id), {
+        onSuccess: () => {
+          // Handle any additional actions after successful update
+        }
+      });
+    }
+  };
+
+  const renderIcon = (value) => {
+    if (value === 1) {
+      return <span className="text-green-600">✔️</span>;
+    } else if (value === 0) {
+      return <span className="text-red-600">❌</span>;
+    } else {
+      return null;
+    }
+  };
+
   // Function to format the date
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -92,6 +112,12 @@ export default function Index({ auth, dventas, children, queryParams = null, suc
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
+                            Venta cerrada
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                          >
                             Fecha de Creacion
                           </th>
                           <th
@@ -120,6 +146,9 @@ export default function Index({ auth, dventas, children, queryParams = null, suc
                                 {dventa.total}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                              {renderIcon(dventa.estado)}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {formatDate(dventa.created_at)}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -132,12 +161,14 @@ export default function Index({ auth, dventas, children, queryParams = null, suc
                                 >
                                   Mostrar
                                 </a>
-                                <a
-                                  href={`/dventas/${dventa.id}/edit`}
-                                  className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
-                                >
-                                  Editar
-                                </a>
+                                {dventa.estado !== 1 && (
+                                  <a
+                                    href={`/dventas/${dventa.id}/edit`}
+                                    className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
+                                  >
+                                    Editar
+                                  </a>
+                                )}
                                 <button
                                   type="button"
                                   onClick={() => handleDelete(dventa.id)}
@@ -145,6 +176,15 @@ export default function Index({ auth, dventas, children, queryParams = null, suc
                                 >
                                   Eliminar
                                 </button>
+                                {dventa.estado !== 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleComplete(dventa.id)}
+                                  className="text-green-600 font-bold hover:text-red-900 pl-2"
+                                >
+                                  Completar
+                                </button>
+                              )}
                               </td>
                             </tr>
                           ))

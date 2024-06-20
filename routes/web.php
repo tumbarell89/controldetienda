@@ -48,8 +48,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('dalmaceninternos', DalmaceninternoController::class);
     Route::resource('dalmacenventas', DalmacenventaController::class);
     Route::resource('dventas', DventaController::class);
+    Route::put('dventas/complete/{id}', [DventaController::class, 'complete'])->name('dventas.complete');
     Route::resource('dentradaalmacens', DentradaalmacenController::class);
+    Route::put('dentradaalmacens/complete/{id}', [DentradaalmacenController::class, 'complete'])->name('dentradaalmacens.complete');
     Route::resource('dsalidaalmacens', DsalidaalmacenController::class);
+    Route::put('dsalidaalmacens/complete/{id}', [DsalidaalmacenController::class, 'complete'])->name('dsalidaalmacens.complete');
 });
 
 require __DIR__.'/auth.php';

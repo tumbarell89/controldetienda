@@ -49,6 +49,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                           <th scope="col" className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">No</th>
                           <th scope="col" className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Denominación</th>
                           <th scope="col" className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Precio de Costo</th>
+                          <th scope="col" className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Precio de Venta</th>
                           <th scope="col" className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Cantidad</th>
                           <th scope="col" className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Código CUP</th>
                           <th scope="col" className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Código de Producto</th>
@@ -65,6 +66,7 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-gray-900">{index + 1}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dproducto.denominacion}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dproducto.preciocosto}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dproducto.precioventa}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dproducto.cantidad}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dproducto.codigocup}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dproducto.codigoproducto}</td>

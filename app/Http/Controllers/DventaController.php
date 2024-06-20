@@ -34,9 +34,10 @@ class DventaController extends Controller
     {
         $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
                 ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
+                ->join('nunidadmedidas','nunidadmedidas.id','=','dproductos.nunidadmedida_id')
                 ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
                                 'dalmacenventas.created_at', 'dalmacenventas.updated_at',
-                                'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                                'dproductos.codigocup', 'nunidadmedidas.denominacion as unidadmedida', 'dproductos.codigoproducto',
                                 'ntipogiros.denominacion as tipogiro')
                 ->paginate();
         //var_dump($dproductos);die;
@@ -104,9 +105,10 @@ class DventaController extends Controller
 
         $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
         ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
+        ->join('nunidadmedidas','nunidadmedidas.id','=','dproductos.nunidadmedida_id')
         ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
                         'dalmacenventas.created_at', 'dalmacenventas.updated_at',
-                        'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                        'dproductos.codigocup', 'nunidadmedidas.denominacion as unidadmedida', 'dproductos.codigoproducto',
                         'ntipogiros.denominacion as tipogiro')
         ->paginate();
 
@@ -125,9 +127,10 @@ class DventaController extends Controller
 
         $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
                 ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
+                ->join('nunidadmedidas','nunidadmedidas.id','=','dproductos.nunidadmedida_id')
                 ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
                                 'dalmacenventas.created_at', 'dalmacenventas.updated_at',
-                                'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                                'dproductos.codigocup', 'nunidadmedidas.denominacion as unidadmedida', 'dproductos.codigoproducto',
                                 'ntipogiros.denominacion as tipogiro')
                 ->paginate();
 
@@ -205,4 +208,24 @@ class DventaController extends Controller
         return Redirect::route('dventas.index')
             ->with('success', 'Dventa deleted successfully');
     }
+
+    public function complete($id): RedirectResponse
+    {
+
+        // Encontrar la entrada de almacén
+        $dventa = Dventa::find($id);
+
+
+        if ($dventa) {
+            //print('aaa');
+            //print($entradaAlmacen->update(['estado' => 1]));die;
+            // Actualizar el campo estado a 1
+            $dventa->update(['estado' => 1]);
+        }
+
+        return Redirect::route('dventas.index')
+            ->with('success', 'Entrada de almacén cerrada correctamente');
+    }
+
+
 }

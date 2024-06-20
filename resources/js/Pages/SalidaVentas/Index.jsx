@@ -22,6 +22,16 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
     }
   };
 
+  const handleComplete = (id) => {
+    if (window.confirm("¿Está seguro que desea cerrar la factura?")) {
+      router.put(route('dsalidaalmacens.complete', id), {
+        onSuccess: () => {
+          // Handle any additional actions after successful update
+        }
+      });
+    }
+  };
+
   // Function to format the date
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -125,6 +135,12 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
+                            Cerrado
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                          >
                             Fecha de Creacion
                           </th>
                           <th
@@ -165,6 +181,9 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
                                 {dsalidaalmacen.nalmacendestino.denominacion}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                              {dsalidaalmacen.estado==0 ? renderIcon(false):renderIcon(true)}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {formatDate(dsalidaalmacen.created_at)}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -177,12 +196,14 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
                                 >
                                   Mostrar
                                 </a>
-                                <a
-                                  href={`/dsalidaalmacens/${dsalidaalmacen.id}/edit`}
-                                  className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
-                                >
-                                  Editar
-                                </a>
+                                {dsalidaalmacen.estado !== 1 && (
+                                  <a
+                                    href={`/dsalidaalmacen/${dsalidaalmacen.id}/edit`}
+                                    className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
+                                  >
+                                    Editar
+                                  </a>
+                                )}
                                 <button
                                   type="button"
                                   onClick={() => handleDelete(dsalidaalmacen.id)}
@@ -190,6 +211,15 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
                                 >
                                   Eliminar
                                 </button>
+                                {dsalidaalmacen.estado !== 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleComplete(dsalidaalmacen.id)}
+                                  className="text-green-600 font-bold hover:text-red-900 pl-2"
+                                >
+                                  Completar
+                                </button>
+                              )}
                               </td>
                             </tr>
                           ))

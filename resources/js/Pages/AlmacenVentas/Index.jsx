@@ -69,6 +69,12 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
+                            Precio de Venta
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                          >
                             Cantidad
                           </th>
                           <th
@@ -125,6 +131,9 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {dproducto.preciocosto}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                {dproducto.precioventa}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {dproducto.cantidad}

@@ -20,9 +20,11 @@ class DalmacenventaController extends Controller
         //$dalmacenventas = Dalmacenventa::paginate();
         $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
                 ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
-                ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
+                ->join('nunidadmedidas','nunidadmedidas.id','=','dproductos.nunidadmedida_id')
+                ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as precioventa',
+                        'dalmacenventas.preciocosto','dalmacenventas.cantidad',
                                 'dalmacenventas.created_at', 'dalmacenventas.updated_at',
-                                'dproductos.codigocup', 'dproductos.unidadmedida', 'dproductos.codigoproducto',
+                                'dproductos.codigocup', 'nunidadmedidas.denominacion as unidadmedida', 'dproductos.codigoproducto',
                                 'ntipogiros.denominacion as tipogiro')
                 ->paginate(10);
         //var_dump($dproductos);die;

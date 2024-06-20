@@ -213,4 +213,23 @@ class DsalidaalmacenController extends Controller
         return Redirect::route('dsalidaalmacens.index')
             ->with('success', 'Salida  de almacén eliminada correctamente');
     }
+
+    public function complete($id): RedirectResponse
+    {
+
+        // Encontrar la entrada de almacén
+        $dsalidaalmacen = Dsalidaalmacen::find($id);
+
+
+        if ($dsalidaalmacen) {
+            //print('aaa');
+            //print($entradaAlmacen->update(['estado' => 1]));die;
+            // Actualizar el campo estado a 1
+            $dsalidaalmacen->update(['estado' => 1]);
+        }
+
+        return Redirect::route('dsalidaalmacens.index')
+            ->with('success', 'Salida de almacén cerrada correctamente');
+    }
+
 }

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $nalmacenes_origen_id
  * @property $nalmacenes_destino_id
  * @property $dproveedor_destino_id
+ * @property $estado
  * @property $created_at
  * @property $updated_at
  *
@@ -34,7 +35,7 @@ class Dsalidaalmacen extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['factura', 'precioventa', 'total', 'esventa', 'nalmacenes_origen_id', 'nalmacenes_destino_id', 'dproveedor_destino_id'];
+    protected $fillable = ['factura', 'precioventa', 'total', 'esventa','estado', 'nalmacenes_origen_id', 'nalmacenes_destino_id', 'dproveedor_destino_id'];
 
 
     /**

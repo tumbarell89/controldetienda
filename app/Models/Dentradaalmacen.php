@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $id
  * @property $factura
  * @property $total
+ * @property $estado
  * @property $nalmacens_id
  * @property $dproveedor_origen_id
  * @property $created_at
@@ -31,7 +32,7 @@ class Dentradaalmacen extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['factura', 'total', 'nalmacens_id', 'dproveedor_origen_id'];
+    protected $fillable = ['factura', 'total', 'estado','nalmacens_id', 'dproveedor_origen_id'];
 
 
     /**

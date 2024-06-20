@@ -179,4 +179,22 @@ class DentradaalmacenController extends Controller
             ->with('success', 'Entrada de almacén eliminada correctamente');
     }
 
+    public function complete($id): RedirectResponse
+    {
+
+        // Encontrar la entrada de almacén
+        $entradaAlmacen = Dentradaalmacen::find($id);
+
+
+        if ($entradaAlmacen) {
+            //print('aaa');
+            //print($entradaAlmacen->update(['estado' => 1]));die;
+            // Actualizar el campo estado a 1
+            $entradaAlmacen->update(['estado' => 1]);
+        }
+
+        return Redirect::route('dentradaalmacens.index')
+            ->with('success', 'Entrada de almacén cerrada correctamente');
+    }
+
 }

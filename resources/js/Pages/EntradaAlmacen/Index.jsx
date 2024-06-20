@@ -22,10 +22,30 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
     }
   };
 
+  const handleComplete = (id) => {
+    if (window.confirm("¿Está seguro que desea cerrar la factura?")) {
+      router.put(route('dentradaalmacens.complete', id), {
+        onSuccess: () => {
+          // Handle any additional actions after successful update
+        }
+      });
+    }
+  };
+
   // Function to format the date
   const formatDate = (dateString) => {
     if (!dateString) return '';
     return new Date(dateString).toISOString().split('T')[0];
+  };
+
+  const renderIcon = (value) => {
+    if (value === 1) {
+      return <span className="text-green-600">✔️</span>;
+    } else if (value === 0) {
+      return <span className="text-red-600">❌</span>;
+    } else {
+      return null;
+    }
   };
 
   return (
@@ -103,6 +123,12 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                             scope="col"
                             className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
                           >
+                            Cerrado
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                          >
                             Fecha de Creación
                           </th>
                           <th
@@ -137,6 +163,9 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                                 {dentradaalmacen.nalmacen.denominacion}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                              {renderIcon(dentradaalmacen.estado)}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {formatDate(dentradaalmacen.created_at)}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -149,12 +178,14 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                                 >
                                   Mostrar
                                 </a>
-                                <a
-                                  href={`/dentradaalmacens/${dentradaalmacen.id}/edit`}
-                                  className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
-                                >
-                                  Editar
-                                </a>
+                                {dentradaalmacen.estado !== 1 && (
+                                  <a
+                                    href={`/dentradaalmacens/${dentradaalmacen.id}/edit`}
+                                    className="text-indigo-600 font-bold hover:text-indigo-900 mr-2"
+                                  >
+                                    Editar
+                                  </a>
+                                )}
                                 <button
                                   type="button"
                                   onClick={() => handleDelete(dentradaalmacen.id)}
@@ -162,6 +193,15 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
                                 >
                                   Eliminar
                                 </button>
+                                {dentradaalmacen.estado !== 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleComplete(dentradaalmacen.id)}
+                                  className="text-green-600 font-bold hover:text-red-900 pl-2"
+                                >
+                                  Completar
+                                </button>
+                              )}
                               </td>
                             </tr>
                           ))
