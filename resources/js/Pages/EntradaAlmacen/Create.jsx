@@ -242,7 +242,7 @@ export default function Adicionar({ auth, nalmacens, dclienteproveedors, dproduc
                             <option value="">Selecciona un proveedor</option>
                             {dclienteproveedors.map((dclienteproveedor) => (
                               <option key={dclienteproveedor.id} value={dclienteproveedor.id}>
-                                {dclienteproveedor.nombre}
+                                {dclienteproveedor.denominacion}
                               </option>
                             ))}
                           </select>
