@@ -6,6 +6,8 @@ use App\Http\Requests\DsalidaalmacenRequest;
 use App\Models\Dalmaceninterno;
 use App\Models\Dclienteproveedor;
 use App\Models\Dproducto;
+use App\Models\Dproductoentrada;
+use App\Models\Dproductosalida;
 use App\Models\Dsalidaalmacen;
 use App\Models\Nalmacen;
 use Illuminate\Http\RedirectResponse;
@@ -39,7 +41,7 @@ class DsalidaalmacenController extends Controller
         $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
         $dproductos = DB::table('dalmaceninternos')
             ->join('dproductos', 'dproductos.id', '=', 'dalmaceninternos.dproductos_id')
-            ->select('dproductos.denominacion', 'dalmaceninternos.dproductos_id as id', 'dalmaceninternos.precio as preciocosto', 'dalmaceninternos.cantidad')
+            ->select('dproductos.denominacion', 'dalmaceninternos.dproductos_id as id', 'dalmaceninternos.precio as preciocosto', 'dalmaceninternos.precioventa as precioventa', 'dalmaceninternos.cantidad')
             ->get();
 
         return inertia('SalidaVentas/Create', [
@@ -72,7 +74,8 @@ class DsalidaalmacenController extends Controller
                         $product['id'],
                         [
                             'cantidad' => $product['cantidad'],
-                            'precio' => $product['precio']
+                            'precio' => $product['precio'],
+                            'precioventa' => $product['precioventa']
                         ]
                     );
                 } else {
@@ -110,6 +113,7 @@ class DsalidaalmacenController extends Controller
                 'denominacion' => $producto->denominacion,
                 'cantidad' => $producto->pivot->cantidad,
                 'precio' => $producto->pivot->precio,
+                'precioventa' => $producto->pivot->precioventa,
             ];
         });
         //var_dump($productosConPivot);die;
@@ -148,6 +152,7 @@ class DsalidaalmacenController extends Controller
                 'denominacion' => $producto->denominacion,
                 'cantidad' => $producto->pivot->cantidad,
                 'precio' => $producto->pivot->precio,
+                'precioventa' => $producto->pivot->precioventa,
             ];
         });
 
@@ -182,7 +187,7 @@ class DsalidaalmacenController extends Controller
                                                 ->where('ialmacens_id', $request->input('nalmacenes_origen_id'))
                                                 ->first();
                 if ($dalmaceninterno && $dalmaceninterno->cantidad >= $product['cantidad']) {
-                    $productos[$product['id']] = ['cantidad' => $product['cantidad'], 'precio' => $product['precio']];
+                    $productos[$product['id']] = ['cantidad' => $product['cantidad'], 'precio' => $product['precio'], 'precioventa' => $product['precioventa']];
                 } else {
                     // Manejar el caso en que la cantidad no es suficiente
                     return Redirect::route('dsalidaalmacens.edit', $id)
@@ -204,6 +209,7 @@ class DsalidaalmacenController extends Controller
 
         if ($dsalidaalmacen) {
             // Eliminar las relaciones en la tabla pivot
+            
             $dsalidaalmacen->dproductosalidas()->detach();
 
             // Eliminar la entrada de almacén

@@ -16,8 +16,15 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
     if (window.confirm("¿Está seguro que desea eliminar este elemento?")) {
       router.delete(route('dentradaalmacens.destroy', id), {
         onSuccess: () => {
-          // Handle any additional actions after successful deletion
-        }
+          alert('kkkk');
+        },
+        onError: (errors) => {
+          if (errors.products) {
+              alert(errors.products);
+          } else {
+              alert('Ocurrió un error al eliminar la entrada de almacén.');
+          }
+      }
       });
     }
   };
@@ -26,7 +33,6 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
     if (window.confirm("¿Está seguro que desea cerrar la factura?")) {
       router.put(route('dentradaalmacens.complete', id), {
         onSuccess: () => {
-          // Handle any additional actions after successful update
         }
       });
     }

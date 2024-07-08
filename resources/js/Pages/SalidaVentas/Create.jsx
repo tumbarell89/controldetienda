@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, router } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Productosmodal from "@/Components/Productosmodal";
@@ -20,7 +20,7 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
   useEffect(() => {
     // Calcular el total cada vez que cambian los productos seleccionados
     const total = selectedProducts.reduce((sum, product) => {
-      return sum + product.cantidad * product.precio;
+      return sum + product.cantidad * product.precioventa;
     }, 0);
     setData({
       ...data,
@@ -31,14 +31,18 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route("dsalidaalmacens.store"));
+    post(route("dsalidaalmacens.store"), {
+      onError:()=>{
+        alert(errors.products);
+      }
+    });
   };
 
   const addProduct = (product) => {
-    if (!selectedProducts.some((p) => p.id === product.id && p.precio === product.preciocosto)) {
+    if (!selectedProducts.some((p) => p.id === product.id && p.precio === product.preciocosto && p.precioventa === product.precioventa)) {
       setSelectedProducts((prevProducts) => [
         ...prevProducts,
-        { ...product, cantidad: 1, precio: product.preciocosto },
+        { ...product, cantidad: 1, precio: product.preciocosto, precioventa: product.precioventa },
       ]);
     }
   };
@@ -58,10 +62,10 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
     );
   };
 
-  const updateProductPrice = (productId, precio) => {
+  const updateProductPrice = (productId, precioventa) => {
     setSelectedProducts((prevProducts) =>
       prevProducts.map((product) =>
-        product.id === productId ? { ...product, precio: parseFloat(precio) } : product
+        product.id === productId ? { ...product, precioventa: parseFloat(precioventa) } : product
       )
     );
   };
@@ -110,6 +114,12 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
+                        Precio Venta
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Acción
                       </th>
                     </tr>
@@ -132,11 +142,14 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
+                          {product.precio}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <input
                             type="number"
-                            step="0.01"
+                            step="0.5"
                             min="0"
-                            value={product.precio}
+                            value={product.precioventa}
                             onChange={(e) =>
                               updateProductPrice(product.id, e.target.value)
                             }
@@ -384,6 +397,12 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Precio venta
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Acción
               </th>
             </tr>
@@ -398,6 +417,9 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                   {dproducto.preciocosto}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
+                  {dproducto.precioventa}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     type="button"
                     onClick={() => addProduct(dproducto)}
@@ -405,7 +427,8 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                     disabled={selectedProducts.some(
                       (p) =>
                         p.id === dproducto.id &&
-                        p.precio === dproducto.preciocosto
+                        p.precio === dproducto.preciocosto &&
+                        p.precioventa === dproducto.precioventa
                     )}
                   >
                     Añadir

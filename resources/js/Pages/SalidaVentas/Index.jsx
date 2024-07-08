@@ -17,6 +17,9 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
       router.delete(route('dsalidaalmacens.destroy', id), {
         onSuccess: () => {
           // Handle any additional actions after successful deletion
+        },
+        onError:()=>{
+          alert(errors.products);
         }
       });
     }
