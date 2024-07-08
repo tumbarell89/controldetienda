@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DsalidaalmacenRequest;
 use App\Models\Dalmaceninterno;
+use App\Models\Dalmacenventa;
 use App\Models\Dclienteproveedor;
 use App\Models\Dproducto;
 use App\Models\Dproductoentrada;
@@ -208,8 +209,28 @@ class DsalidaalmacenController extends Controller
         $dsalidaalmacen = Dsalidaalmacen::find($id);
 
         if ($dsalidaalmacen) {
+            $dproductosentrada = Dproductosalida::join('dproductos', 'dproductos.id', '=', 'dproductosalidas.dproducto_id')
+                                    ->where('dsalidaalmacen_id', $id)
+                                    ->get();
+
+                foreach ($dproductosentrada as $product) {
+                    $dalmacenventa = Dalmacenventa::where('dproductos_id', $product['dproductos_id'])
+                                                    ->where('precio', $product['precioventa'])
+                                                    ->first();
+                    if ($dalmacenventa && $dalmacenventa->cantidad >= $product['cantidad']) {
+                        // Eliminar las relaciones en la tabla pivot
+                        $dsalidaalmacen->dproductoentradas()->detach();
+                        // Eliminar la entrada de almacén
+                        $dsalidaalmacen->delete();
+
+                    } else {
+                        // Manejar el caso en que la cantidad no es suficiente
+                        return Redirect::route('dsalidaalmacens.index')
+                            ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['denominacion']]);
+                    }
+                }
             // Eliminar las relaciones en la tabla pivot
-            
+
             $dsalidaalmacen->dproductosalidas()->detach();
 
             // Eliminar la entrada de almacén

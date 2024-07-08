@@ -18,8 +18,12 @@ export default function Index({ auth, dsalidaalmacens, children, queryParams = n
         onSuccess: () => {
           // Handle any additional actions after successful deletion
         },
-        onError:()=>{
-          alert(errors.products);
+        onError: (errors) => {
+          if (errors.products) {
+              alert(errors.products);
+          } else {
+              alert('Ocurrió un error al eliminar la entrada de almacén.');
+          }
         }
       });
     }

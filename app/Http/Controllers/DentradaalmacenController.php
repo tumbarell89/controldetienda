@@ -173,7 +173,6 @@ class DentradaalmacenController extends Controller
         $entradaAlmacen = Dentradaalmacen::find($id);
         //var_dump('adada');die;
         if ($entradaAlmacen) {
-            if ($entradaAlmacen) {
                 //var_dump('dproductosentrada');die;
                 $dproductosentrada = Dproductoentrada::join('dproductos', 'dproductos.id', '=', 'dproductoentradas.dproducto_id')
                                     ->where('dentradaalmacen_id', $id)
@@ -196,7 +195,7 @@ class DentradaalmacenController extends Controller
                     }
                 }
 
-            }
+
         }
 
         return Redirect::route('dentradaalmacens.index')

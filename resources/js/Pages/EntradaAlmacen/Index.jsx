@@ -16,7 +16,6 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
     if (window.confirm("¿Está seguro que desea eliminar este elemento?")) {
       router.delete(route('dentradaalmacens.destroy', id), {
         onSuccess: () => {
-          alert('kkkk');
         },
         onError: (errors) => {
           if (errors.products) {
@@ -24,7 +23,7 @@ export default function Index({ auth, dentradaalmacens, children, queryParams = 
           } else {
               alert('Ocurrió un error al eliminar la entrada de almacén.');
           }
-      }
+        }
       });
     }
   };

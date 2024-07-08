@@ -32,7 +32,7 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
   const handleSubmit = (e) => {
     e.preventDefault();
     post(route("dsalidaalmacens.store"), {
-      onError:()=>{
+      onError:(errors)=>{
         alert(errors.products);
       }
     });
@@ -108,7 +108,7 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
-                        Precio
+                        Precio costo
                       </th>
                       <th
                         scope="col"

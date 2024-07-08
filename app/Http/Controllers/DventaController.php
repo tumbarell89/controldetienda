@@ -35,7 +35,7 @@ class DventaController extends Controller
         $dproductos = Dalmacenventa::join('dproductos', 'dproductos.id', '=', 'dalmacenventas.dproductos_id')
                 ->join('ntipogiros','ntipogiros.id','=','dproductos.dtipogiros_id')
                 ->join('nunidadmedidas','nunidadmedidas.id','=','dproductos.nunidadmedida_id')
-                ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as preciocosto', 'dalmacenventas.cantidad',
+                ->select('dproductos.denominacion', 'dalmacenventas.dproductos_id as id', 'dalmacenventas.precio as precioventa', 'dalmacenventas.preciocosto as preciocosto', 'dalmacenventas.cantidad',
                                 'dalmacenventas.created_at', 'dalmacenventas.updated_at',
                                 'dproductos.codigocup', 'nunidadmedidas.denominacion as unidadmedida', 'dproductos.codigoproducto',
                                 'ntipogiros.denominacion as tipogiro')
@@ -84,6 +84,8 @@ class DventaController extends Controller
                             'precio' => $product['precio']
                         ]
                     );
+                    $dalmacenventas->cantidad = $dalmacenventas->cantidad - $product['cantidad'];
+                    $dalmacenventas->save();
                 } else {
                     // Manejar el caso en que la cantidad no es suficiente
                     return Redirect::route('dventas.create')
@@ -91,6 +93,8 @@ class DventaController extends Controller
                 }
             }
         }
+        $venta->codigo = $venta->id.'/'.date('Y');
+        $venta->save();
         return Redirect::route('dventas.index')
             ->with('success', 'Dventa created successfully.');
 

@@ -16,7 +16,7 @@ export default function Adicionar({ auth, dproductos }) {
   useEffect(() => {
     // Calcular el total cada vez que cambian los productos seleccionados
     const total = selectedProducts.reduce((sum, product) => {
-      return sum + product.cantidad * product.precio;
+      return sum + product.cantidad * product.precioventa;
     }, 0);
     setData(prevData => ({
       ...prevData,
@@ -30,7 +30,11 @@ export default function Adicionar({ auth, dproductos }) {
     if (data.total === null || data.total === undefined) {
       return;
     }
-    post(route("dventas.store"));
+    post(route("dventas.store"),{
+      onError: ()=>{
+        alert(errors.products);
+      }
+    });
   };
 
   const addProduct = (product) => {
@@ -135,20 +139,10 @@ export default function Adicionar({ auth, dproductos }) {
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={product.precio}
-                            readOnly
-                            onChange={(e) =>
-                              updateProductPrice(product.id, e.target.value)
-                            }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          />
+                          {product.preciocosto}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {product.preciocosto}
+                          {product.precioventa}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <button
@@ -289,7 +283,7 @@ export default function Adicionar({ auth, dproductos }) {
                   {dproducto.preciocosto}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {dproducto.preciocosto}
+                  {dproducto.precioventa}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {dproducto.cantidad}
