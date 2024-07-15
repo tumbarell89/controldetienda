@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dalmaceninterno;
 use App\Models\Dclienteproveedor;
 use App\Models\Dentradaalmacen;
 use App\Models\Dproducto;
+use App\Models\Dproductoentrada;
 use App\Models\Nalmacen;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -60,7 +62,8 @@ class DentradaalmacenController extends Controller
                     $product['id'],
                     [
                         'cantidad' => $product['cantidad'],
-                        'precio' => $product['precio']
+                        'precio' => $product['precio'],
+                        'precioventa' => $product['precioventa']
                     ]
                 );
             }
@@ -92,6 +95,7 @@ class DentradaalmacenController extends Controller
                 'denominacion' => $producto->denominacion,
                 'cantidad' => $producto->pivot->cantidad,
                 'precio' => $producto->pivot->precio,
+                'precioventa' => $producto->pivot->precioventa,
             ];
         });
 
@@ -125,6 +129,7 @@ class DentradaalmacenController extends Controller
                 'denominacion' => $producto->denominacion,
                 'cantidad' => $producto->pivot->cantidad,
                 'precio' => $producto->pivot->precio,
+                'precioventa' => $producto->pivot->precioventa,
             ];
         });
 
@@ -154,7 +159,7 @@ class DentradaalmacenController extends Controller
         if ($request->has('products')) {
             // Sincronizar los productos con la entrada de almacén
             $productos = collect($request->input('products'))->mapWithKeys(function ($product) {
-                return [$product['id'] => ['cantidad' => $product['cantidad'], 'precio' => $product['precio']]];
+                return [$product['id'] => ['cantidad' => $product['cantidad'], 'precio' => $product['precio'], 'precioventa' => $product['precioventa']]];
             });
             $dentradaalmacen->dproductoentradas()->sync($productos);
         }
@@ -166,13 +171,31 @@ class DentradaalmacenController extends Controller
     {
         // Encontrar la entrada de almacén
         $entradaAlmacen = Dentradaalmacen::find($id);
-
+        //var_dump('adada');die;
         if ($entradaAlmacen) {
-            // Eliminar las relaciones en la tabla pivot
-            $entradaAlmacen->dproductoentradas()->detach();
+                //var_dump('dproductosentrada');die;
+                $dproductosentrada = Dproductoentrada::join('dproductos', 'dproductos.id', '=', 'dproductoentradas.dproducto_id')
+                                    ->where('dentradaalmacen_id', $id)
+                                    ->get();
 
-            // Eliminar la entrada de almacén
-            $entradaAlmacen->delete();
+                foreach ($dproductosentrada as $product) {
+                    $dalmaceninterno = Dalmaceninterno::where('dproductos_id', $product['dproductos_id'])
+                                                    ->where('precio', $product['precio'])
+                                                    ->first();
+                    if ($dalmaceninterno && $dalmaceninterno->cantidad >= $product['cantidad']) {
+                        // Eliminar las relaciones en la tabla pivot
+                        $entradaAlmacen->dproductoentradas()->detach();
+                        // Eliminar la entrada de almacén
+                        $entradaAlmacen->delete();
+
+                    } else {
+                        // Manejar el caso en que la cantidad no es suficiente
+                        return Redirect::route('dentradaalmacens.index')
+                            ->withErrors(['products' => 'Cantidad insuficiente para el producto ' . $product['denominacion']]);
+                    }
+                }
+
+
         }
 
         return Redirect::route('dentradaalmacens.index')
