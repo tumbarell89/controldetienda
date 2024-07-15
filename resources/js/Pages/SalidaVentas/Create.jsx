@@ -38,7 +38,7 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
     if (!selectedProducts.some((p) => p.id === product.id && p.precio === product.preciocosto)) {
       setSelectedProducts((prevProducts) => [
         ...prevProducts,
-        { ...product, cantidad: 1, precio: product.preciocosto },
+        { ...product, cantidad: 1, precio: product.preciocosto, precioventa: product.precioventa },
       ]);
     }
   };
@@ -92,7 +92,7 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
-                        Nombre
+                        Denominación
                       </th>
                       <th
                         scope="col"
@@ -104,7 +104,13 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
-                        Precio
+                        Precio Costo
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Precio Venta
                       </th>
                       <th
                         scope="col"
@@ -132,11 +138,14 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
+                          {product.preciocosto}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <input
                             type="number"
                             step="0.01"
                             min="0"
-                            value={product.precio}
+                            value={product.precioventa}
                             onChange={(e) =>
                               updateProductPrice(product.id, e.target.value)
                             }
@@ -372,13 +381,19 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Nombre
+                Denominación
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
                 Precio
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Precio venta
               </th>
               <th
                 scope="col"
@@ -398,6 +413,9 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                   {dproducto.preciocosto}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
+                  {dproducto.precioventa}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     type="button"
                     onClick={() => addProduct(dproducto)}
@@ -405,7 +423,8 @@ export default function Adicionar({ auth, nalmacenorigen, nalmacendestino, dclie
                     disabled={selectedProducts.some(
                       (p) =>
                         p.id === dproducto.id &&
-                        p.precio === dproducto.preciocosto
+                        p.precio === dproducto.preciocosto &&
+                        p.precioventa === dproducto.precioventa
                     )}
                   >
                     Añadir

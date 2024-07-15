@@ -39,7 +39,7 @@ class DsalidaalmacenController extends Controller
         $dclienteproveedors = Dclienteproveedor::where('tipocliente', 1)->get(); // Filtrar por tipoccliente igual a 1
         $dproductos = DB::table('dalmaceninternos')
             ->join('dproductos', 'dproductos.id', '=', 'dalmaceninternos.dproductos_id')
-            ->select('dproductos.denominacion', 'dalmaceninternos.dproductos_id as id', 'dalmaceninternos.precio as preciocosto', 'dalmaceninternos.cantidad')
+            ->select('dproductos.denominacion', 'dalmaceninternos.dproductos_id as id', 'dalmaceninternos.precio as preciocosto', 'dproductos.precioventa as precioventa', 'dalmaceninternos.cantidad')
             ->get();
 
         return inertia('SalidaVentas/Create', [

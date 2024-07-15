@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 
@@ -16,12 +16,22 @@ export default function Adicionar({ auth, dclienteproveedor }) {
     post(route('dclienteproveedors.store'));
   };
 
+  useEffect(() => {
+    // Change the label text based on the tipo cliente
+    const label = document.getElementById('denominacion-label');
+    if (data.tipocliente === '2') {
+      label.textContent = 'Nombre y Apellidos del Cliente';
+    } else {
+      label.textContent = 'Denominación';
+    }
+  }, [data.tipocliente]);
+
   return (
     <Authenticated
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Adicionar Dclienteproveedor
+          Adicionar Cliente Proveedor
         </h2>
       }
     >
@@ -32,7 +42,7 @@ export default function Adicionar({ auth, dclienteproveedor }) {
             <div className="w-full">
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                  <h1 className="text-base font-semibold leading-6 text-gray-900">Adicionar Dclienteproveedor</h1>
+                  <h1 className="text-base font-semibold leading-6 text-gray-900">Adicionar Cliente Proveedor</h1>
                   <p className="mt-2 text-sm text-gray-700">Add a new Dclienteproveedor.</p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -50,24 +60,7 @@ export default function Adicionar({ auth, dclienteproveedor }) {
                   <div className="max-w-xl py-2 align-middle">
                     <form onSubmit={handleSubmit} encType="multipart/form-data">
                       <div className="space-y-6">
-                        <div>
-                          <label htmlFor="denominacion" className="block text-sm font-medium text-gray-700">
-                            Denominacion
-                          </label>
-                          <input
-                            id="denominacion"
-                            name="denominacion"
-                            type="text"
-                            value={data.denominacion}
-                            onChange={e => setData('denominacion', e.target.value)}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            autoComplete="denominacion"
-                            placeholder="Denominacion"
-                          />
-                          {errors.denominacion && <p className="mt-2 text-sm text-red-600">{errors.denominacion}</p>}
-                        </div>
-
-                        <div>
+                      <div>
                           <label className="block text-sm font-medium text-gray-700">
                             Tipo Cliente
                           </label>
@@ -101,43 +94,56 @@ export default function Adicionar({ auth, dclienteproveedor }) {
                           </div>
                           {errors.tipocliente && <p className="mt-2 text-sm text-red-600">{errors.tipocliente}</p>}
                         </div>
-
-                        {data.tipocliente === 2 && (
-                          <div>
-                          <div>
-                            <label htmlFor="carnetidentidad" className="block text-sm font-medium text-gray-700">
-                              Carnet de Identidad
-                            </label>
-                            <input
-                              id="carnetidentidad"
-                              name="carnetidentidad"
-                              type="text"
-                              value={data.carnetidentidad}
-                              onChange={e => setData('carnetidentidad', e.target.value)}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                              placeholder="Carnet de Identidad"
-                            />
-                            {errors.carnetidentidad && <p className="mt-2 text-sm text-red-600">{errors.carnetidentidad}</p>}
-                          </div>
-                          <div>
-                          <label htmlFor="esembarazada" className="block text-sm font-medium text-gray-700">
-                            Es Embarazada
+                        <div>
+                          <label id="denominacion-label" htmlFor="denominacion" className="block text-sm font-medium text-gray-700">
+                            Denominacion
                           </label>
                           <input
-                            id="esembarazada"
-                            name="esembarazada"
-                            type="checkbox"
-                            checked={data.esembarazada}
-                            onChange={e => setData('esembarazada', e.target.checked)}
-                            className="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            id="denominacion"
+                            name="denominacion"
+                            type="text"
+                            value={data.denominacion}
+                            onChange={e => setData('denominacion', e.target.value)}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            autoComplete="denominacion"
+                            placeholder="Denominacion"
                           />
-                          {errors.esembarazada && <p className="mt-2 text-sm text-red-600">{errors.esembarazada}</p>}
-                        </div>
+                          {errors.denominacion && <p className="mt-2 text-sm text-red-600">{errors.denominacion}</p>}
                         </div>
 
+                        {data.tipocliente === '2' && (
+                          <div>
+                            <div>
+                              <label htmlFor="carnetidentidad" className="block text-sm font-medium text-gray-700">
+                                Carnet de Identidad
+                              </label>
+                              <input
+                                id="carnetidentidad"
+                                name="carnetidentidad"
+                                type="text"
+                                value={data.carnetidentidad}
+                                onChange={e => setData('carnetidentidad', e.target.value)}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                placeholder="Carnet de Identidad"
+                              />
+                              {errors.carnetidentidad && <p className="mt-2 text-sm text-red-600">{errors.carnetidentidad}</p>}
+                            </div>
+                            <div>
+                              <label htmlFor="esembarazada" className="block text-sm font-medium text-gray-700">
+                                Es Embarazada
+                              </label>
+                              <input
+                                id="esembarazada"
+                                name="esembarazada"
+                                type="checkbox"
+                                checked={data.esembarazada}
+                                onChange={e => setData('esembarazada', e.target.checked)}
+                                className="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              />
+                              {errors.esembarazada && <p className="mt-2 text-sm text-red-600">{errors.esembarazada}</p>}
+                            </div>
+                          </div>
                         )}
-
-
 
                         <div>
                           <label htmlFor="activo" className="block text-sm font-medium text-gray-700">

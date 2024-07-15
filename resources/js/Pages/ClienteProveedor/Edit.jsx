@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 
 export default function Editar({ auth, dclienteproveedor }) {
   const { data, setData, put, errors } = useForm({
     denominacion: dclienteproveedor.denominacion || '',
-    tipocliente: String(dclienteproveedor.tipocliente) || '',
+    tipocliente: dclienteproveedor.tipocliente || '',
     esembarazada: dclienteproveedor.esembarazada || false,
     activo: dclienteproveedor.activo || false,
     carnetidentidad: dclienteproveedor.carnetidentidad || ''
@@ -16,12 +16,22 @@ export default function Editar({ auth, dclienteproveedor }) {
     put(route('dclienteproveedors.update', dclienteproveedor.id));
   };
 
+  useEffect(() => {
+    // Change the label text based on the tipo cliente
+    const label = document.getElementById('denominacion-label');
+    if (data.tipocliente === '2') {
+      label.textContent = 'Nombre y Apellidos del Cliente';
+    } else {
+      label.textContent = 'Denominación';
+    }
+  }, [data.tipocliente]);
+
   return (
     <Authenticated
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Editar Dclienteproveedor
+          Editar Cliente Proveedor
         </h2>
       }
     >
@@ -32,8 +42,8 @@ export default function Editar({ auth, dclienteproveedor }) {
             <div className="w-full">
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                  <h1 className="text-base font-semibold leading-6 text-gray-900">Editar Dclienteproveedor</h1>
-                  <p className="mt-2 text-sm text-gray-700">Editar the details of the Dclienteproveedor.</p>
+                  <h1 className="text-base font-semibold leading-6 text-gray-900">Editar Cliente Proveedor</h1>
+                  {/* <p className="mt-2 text-sm text-gray-700">Edit the details of the Dclienteproveedor.</p> */}
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                   <Link
@@ -51,7 +61,41 @@ export default function Editar({ auth, dclienteproveedor }) {
                     <form onSubmit={handleSubmit} encType="multipart/form-data">
                       <div className="space-y-6">
                         <div>
-                          <label htmlFor="denominacion" className="block text-sm font-medium text-gray-700">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Tipo Cliente
+                          </label>
+                          <div className="mt-2 space-y-2">
+                            <div>
+                              <label className="inline-flex items-center">
+                                <input
+                                  type="radio"
+                                  name="tipocliente"
+                                  value="1"
+                                  checked={data.tipocliente+'' === '1'}
+                                  onChange={e => setData('tipocliente', e.target.value)}
+                                  className="form-radio"
+                                />
+                                <span className="ml-2">Proveedor</span>
+                              </label>
+                            </div>
+                            <div>
+                              <label className="inline-flex items-center">
+                                <input
+                                  type="radio"
+                                  name="tipocliente"
+                                  value="2"
+                                  checked={data.tipocliente+'' === '2'}
+                                  onChange={e => setData('tipocliente', e.target.value)}
+                                  className="form-radio"
+                                />
+                                <span className="ml-2">Cliente</span>
+                              </label>
+                            </div>
+                          </div>
+                          {errors.tipocliente && <p className="mt-2 text-sm text-red-600">{errors.tipocliente}</p>}
+                        </div>
+                        <div>
+                          <label id="denominacion-label" htmlFor="denominacion" className="block text-sm font-medium text-gray-700">
                             Denominacion
                           </label>
                           <input
@@ -67,42 +111,7 @@ export default function Editar({ auth, dclienteproveedor }) {
                           {errors.denominacion && <p className="mt-2 text-sm text-red-600">{errors.denominacion}</p>}
                         </div>
 
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">
-                            Tipo Cliente
-                          </label>
-                          <div className="mt-2 space-y-2">
-                            <div>
-                              <label className="inline-flex items-center">
-                                <input
-                                  type="radio"
-                                  name="tipocliente"
-                                  value="1"
-                                  checked={data.tipocliente === 1}
-                                  onChange={e => setData('tipocliente', e.target.value)}
-                                  className="form-radio"
-                                />
-                                <span className="ml-2">Proveedor</span>
-                              </label>
-                            </div>
-                            <div>
-                              <label className="inline-flex items-center">
-                                <input
-                                  type="radio"
-                                  name="tipocliente"
-                                  value="2"
-                                  checked={data.tipocliente === 2}
-                                  onChange={e => setData('tipocliente', e.target.value)}
-                                  className="form-radio"
-                                />
-                                <span className="ml-2">Cliente</span>
-                              </label>
-                            </div>
-                          </div>
-                          {errors.tipocliente && <p className="mt-2 text-sm text-red-600">{errors.tipocliente}</p>}
-                        </div>
-
-                        {data.tipocliente === 2 && (
+                        {data.tipocliente+'' === '2' && (
                           <div>
                             <div>
                               <label htmlFor="carnetidentidad" className="block text-sm font-medium text-gray-700">
