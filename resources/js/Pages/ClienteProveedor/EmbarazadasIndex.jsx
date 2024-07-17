@@ -45,12 +45,6 @@ export default function EmbarazadasIndex({ auth, embarazadas }) {
                                             Exportar Excel
                                         </button>
                                     </DownloadTableExcel>
-                                    {/* <Link
-                                        href={route("dclienteproveedors.exportPDF")}
-                                        className="block rounded-md bg-red-600 py-2 px-4 text-center text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                                    >
-                                        Exportar PDF
-                                    </Link> */}
                                 </div>
                             </div>
                             <div className="flow-root">

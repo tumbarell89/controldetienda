@@ -1,10 +1,12 @@
 import Pagination from "@/Components/Pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { DownloadTableExcel } from 'react-export-table-to-excel';
 
 export default function Index({ auth, dproductos, children, queryParams = null, success }) {
   const [currentPage, setCurrentPage] = useState(dproductos.current_page);
+  const tableRef = useRef(null);
 
   const handlePageClick = (data) => {
     const selectedPage = data.selected + 1;
@@ -39,12 +41,22 @@ export default function Index({ auth, dproductos, children, queryParams = null, 
                   </h1>
                   <p className="mt-2 text-sm text-gray-700">Lista de Tipos Giros en el Almacén de Ventas</p>
                 </div>
+                <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex space-x-2">
+                  <DownloadTableExcel
+                    filename="AlmacenVentas"
+                    sheet="AlmacenVentas"
+                    currentTableRef={tableRef.current}
+                  >
+                    <button className="block rounded-md bg-green-600 py-2 px-4 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                      Exportar Excel
+                    </button>
+                  </DownloadTableExcel>
+                </div>
               </div>
-
               <div className="flow-root">
                 <div className="mt-8 overflow-x-auto">
                   <div className="inline-block min-w-full py-2 align-middle">
-                    <table className="w-full divide-y divide-gray-300">
+                    <table className="w-full divide-y divide-gray-300" ref={tableRef}>
                       <thead>
                         <tr>
                           <th
